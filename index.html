@@ -703,13 +703,13 @@ function removeCity(key) {
 function getSecondOfDay(tz) {
     const now = new Date();
     const parts = new Intl.DateTimeFormat('en', {
+        year: 'numeric', month: 'numeric', day: 'numeric',
         hour: 'numeric', minute: 'numeric', second: 'numeric',
         hour12: false, hourCycle: 'h23', timeZone: tz
     }).formatToParts(now);
-    const h = parseInt(parts.find(p => p.type === 'hour').value);
-    const m = parseInt(parts.find(p => p.type === 'minute').value);
-    const s = parseInt(parts.find(p => p.type === 'second').value);
-    return h * 3600 + m * 60 + s;
+    const get = type => parseInt(parts.find(p => p.type === type).value);
+    const dayEpoch = Date.UTC(get('year'), get('month') - 1, get('day')) / 86400000;
+    return dayEpoch * 86400 + get('hour') * 3600 + get('minute') * 60 + get('second');
 }
 
 function sortedCities() {
