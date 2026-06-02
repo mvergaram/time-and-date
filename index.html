@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hora Mundial</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        [data-theme="dark"] {
+            --bg:             #075056;
+            --bg-card:        #054044;
+            --bg-input:       #054044;
+            --border:         #0a6870;
+            --border-focus:   #7dd4d8;
+            --text:           #EEF7FF;
+            --text-muted:     #8ecdd0;
+            --text-dim:       #3a8a8e;
+            --accent:         #7dd4d8;
+            --remove:         #2a7a7e;
+            --scrollbar:      #0a6870;
+            --empty-icon:     #0a6870;
+            --empty-text:     #2a7a7e;
+            --shadow:         rgba(0,0,0,0.4);
+            --dropdown-hover: #0a6870;
+            --footer-text:    #2a7a7e;
+        }
+
+        [data-theme="light"] {
+            --bg:             linear-gradient(160deg, #9ec8e0 0%, #cce6f2 40%, #eef7ff 100%);
+            --bg-card:        rgba(255,255,255,0.68);
+            --bg-input:       rgba(255,255,255,0.80);
+            --border:         rgba(7,80,86,0.15);
+            --border-focus:   #075056;
+            --text:           #075056;
+            --text-muted:     #2a7a82;
+            --text-dim:       #6ab0b6;
+            --accent:         #075056;
+            --remove:         #a8cfd4;
+            --scrollbar:      #6ab0b6;
+            --empty-icon:     #a8cfd4;
+            --empty-text:     #6ab0b6;
+            --shadow:         rgba(7,80,86,0.10);
+            --dropdown-hover: rgba(7,80,86,0.07);
+            --footer-text:    #6ab0b6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2.5rem 1.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        main { flex: 1; }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+
+        h1 span { color: var(--accent); }
+
+        .header-controls {
+            position: absolute;
+            right: 0;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .ctrl-btn {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            padding: 0.4rem 0.65rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1;
+            transition: border-color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .ctrl-btn:hover { border-color: var(--border-focus); }
+
+        /* ── Search ── */
+        .search-wrapper {
+            position: relative;
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            pointer-events: none;
+            font-size: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            font-size: 1rem;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .search-input:focus { border-color: var(--border-focus); }
+        .search-input::placeholder { color: var(--text-dim); }
+
+        /* ── Dropdown ── */
+        .dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            z-index: 200;
+            display: none;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .dropdown.open { display: block; }
+
+        .dropdown-item {
+            padding: 0.65rem 1rem;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto auto;
+            gap: 0 0.75rem;
+            transition: background 0.12s;
+        }
+
+        .dropdown-item:hover { background: var(--dropdown-hover); }
+        .dropdown-item:first-child { border-radius: 10px 10px 0 0; }
+        .dropdown-item:last-child  { border-radius: 0 0 10px 10px; }
+        .dropdown-item:only-child  { border-radius: 10px; }
+
+        .di-name    { font-weight: 500; font-size: 0.95rem; grid-row: 1; grid-column: 1; }
+        .di-country { color: var(--text-muted); font-size: 0.8rem; grid-row: 2; grid-column: 1; }
+        .di-tz      { color: var(--text-dim); font-size: 0.75rem; grid-row: 1 / 3; grid-column: 2;
+                      align-self: center; white-space: nowrap; font-family: monospace; }
+
+        .no-results {
+            padding: 0.9rem 1rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* ── Grid ── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.25rem 1.25rem 1rem;
+            transition: border-color 0.2s, transform 0.15s;
+            backdrop-filter: blur(6px);
+        }
+
+        .card:hover {
+            border-color: var(--border-focus);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title { flex: 1; }
+
+        .city-name    { font-size: 1rem; font-weight: 600; line-height: 1.2; color: var(--text); }
+        .city-country { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--remove);
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0.2rem;
+            border-radius: 6px;
+            transition: color 0.15s, background 0.15s;
+            flex-shrink: 0;
+            margin-left: 0.5rem;
+            margin-top: -0.1rem;
+        }
+
+        .remove-btn:hover { color: #ef4444; background: rgba(239,68,68,0.12); }
+
+        .city-time {
+            font-size: 2.4rem;
+            font-weight: 300;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .city-date   { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; text-transform: capitalize; }
+        .city-offset { font-size: 0.72rem; color: var(--text-dim);   margin-top: 0.4rem; }
+
+        /* ── Empty state ── */
+        .empty {
+            text-align: center;
+            padding: 5rem 2rem;
+            grid-column: 1 / -1;
+        }
+
+        .empty svg { width: 48px; height: 48px; stroke: var(--empty-icon); margin-bottom: 1rem; }
+        .empty p   { font-size: 1rem; color: var(--empty-text); }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.78rem;
+            color: var(--footer-text);
+            letter-spacing: 0.01em;
+        }
+
+        footer a {
+            color: var(--text-dim);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--text-dim);
+        }
+
+        footer a:hover { color: var(--accent); border-color: var(--accent); }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-focus); }
+    </style>
+</head>
+<body>
+<main>
+    <div class="header">
+        <h1 id="appTitle"></h1>
+        <div class="header-controls">
+            <button class="ctrl-btn" id="langBtn" title="Change language / Cambiar idioma"></button>
+            <button class="ctrl-btn" id="themeBtn" title=""></button>
+        </div>
+    </div>
+
+    <div class="search-wrapper">
+        <span class="search-icon">&#9906;</span>
+        <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            autocomplete="off"
+            spellcheck="false"
+        >
+        <div id="dropdown" class="dropdown"></div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+// ── Translations ────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+    es: {
+        title:        'Hora <span>Mundial</span>',
+        placeholder:  'Buscar ciudad o país…',
+        empty:        'Busca una ciudad para comenzar',
+        noResults:    'Sin resultados',
+        remove:       'Eliminar',
+        changeTheme:  'Cambiar tema',
+        footer:       'Creado por Miguel gracias a <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>',
+        dateLocale:   'es',
+    },
+    en: {
+        title:        'World <span>Time</span>',
+        placeholder:  'Search city or country…',
+        empty:        'Search a city to get started',
+        noResults:    'No results',
+        remove:       'Remove',
+        changeTheme:  'Change theme',
+        footer:       'Created by Miguel thanks to <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>',
+        dateLocale:   'en',
+    },
+};
+
+const STORAGE_KEY = 'worldtime_v1';
+const THEME_KEY   = 'worldtime_theme';
+const LANG_KEY    = 'worldtime_lang';
+
+let selectedCities = [];
+let lastSortKeys   = '';
+let currentLang    = 'es';
+
+function t(key) { return TRANSLATIONS[currentLang][key]; }
+
+// ── Language ─────────────────────────────────────────────────────────────────
+function detectLang() {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && TRANSLATIONS[saved]) return saved;
+    const browser = (navigator.language || navigator.userLanguage || 'es').toLowerCase();
+    return browser.startsWith('es') ? 'es' : 'en';
+}
+
+function applyLang(lang, save = true) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    if (save) localStorage.setItem(LANG_KEY, lang);
+
+    document.getElementById('appTitle').innerHTML   = t('title');
+    document.getElementById('searchInput').placeholder = t('placeholder');
+    document.getElementById('langBtn').textContent  = lang === 'es' ? 'EN' : 'ES';
+    document.getElementById('themeBtn').title        = t('changeTheme');
+    document.getElementById('footer').innerHTML      = t('footer');
+
+    // Re-render cards (date locale may change)
+    renderFull();
+}
+
+document.getElementById('langBtn').addEventListener('click', () => {
+    applyLang(currentLang === 'es' ? 'en' : 'es');
+});
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function applyTheme(theme, save = true) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀' : '☾';
+    if (save) localStorage.setItem(THEME_KEY, theme);
+}
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+});
+
+// ── Cities ────────────────────────────────────────────────────────────────────
+const CITIES = [
+    // ── América del Norte ──
+    { name:"Honolulu",              country:"Estados Unidos",    countryEn:"United States",   tz:"Pacific/Honolulu",                      lat: 21.31 },
+    { name:"Anchorage",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Anchorage",                     lat: 61.22 },
+    { name:"Juneau",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Juneau",                        lat: 58.30 },
+    { name:"Vancouver",             country:"Canadá",            countryEn:"Canada",          tz:"America/Vancouver",                     lat: 49.25 },
+    { name:"Victoria",              country:"Canadá",            countryEn:"Canada",          tz:"America/Vancouver",                     lat: 48.43 },
+    { name:"Seattle",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 47.61 },
+    { name:"Portland",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 45.52 },
+    { name:"San Francisco",         country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 37.77 },
+    { name:"Los Ángeles",           nameEn:"Los Angeles",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 34.05 },
+    { name:"San Diego",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 32.72 },
+    { name:"Las Vegas",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 36.17 },
+    { name:"Phoenix",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Phoenix",                       lat: 33.45 },
+    { name:"Tucson",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Phoenix",                       lat: 32.22 },
+    { name:"Denver",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 39.74 },
+    { name:"Salt Lake City",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 40.76 },
+    { name:"Albuquerque",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 35.08 },
+    { name:"Calgary",               country:"Canadá",            countryEn:"Canada",          tz:"America/Edmonton",                      lat: 51.05 },
+    { name:"Edmonton",              country:"Canadá",            countryEn:"Canada",          tz:"America/Edmonton",                      lat: 53.55 },
+    { name:"Tijuana",               country:"México",            countryEn:"Mexico",          tz:"America/Tijuana",                       lat: 32.53 },
+    { name:"Mexicali",              country:"México",            countryEn:"Mexico",          tz:"America/Tijuana",                       lat: 32.66 },
+    { name:"Ensenada",              country:"México",            countryEn:"Mexico",          tz:"America/Tijuana",                       lat: 31.87 },
+    { name:"Chihuahua",             country:"México",            countryEn:"Mexico",          tz:"America/Chihuahua",                     lat: 28.63 },
+    { name:"Ciudad Juárez",         nameEn:"Ciudad Juarez",      country:"México",            countryEn:"Mexico",          tz:"America/Ciudad_Juarez",                 lat: 31.69 },
+    { name:"Hermosillo",            country:"México",            countryEn:"Mexico",          tz:"America/Hermosillo",                    lat: 29.09 },
+    { name:"Los Mochis",            country:"México",            countryEn:"Mexico",          tz:"America/Mazatlan",                      lat: 25.79 },
+    { name:"Mazatlán",              nameEn:"Mazatlan",           country:"México",            countryEn:"Mexico",          tz:"America/Mazatlan",                      lat: 23.24 },
+    { name:"Monterrey",             country:"México",            countryEn:"Mexico",          tz:"America/Monterrey",                     lat: 25.67 },
+    { name:"Saltillo",              country:"México",            countryEn:"Mexico",          tz:"America/Monterrey",                     lat: 25.42 },
+    { name:"Torreón",               nameEn:"Torreon",            country:"México",            countryEn:"Mexico",          tz:"America/Monterrey",                     lat: 25.54 },
+    { name:"Ciudad de México",      nameEn:"Mexico City",        country:"México",            countryEn:"Mexico",          tz:"America/Mexico_City",                   lat: 19.43 },
+    { name:"Guadalajara",           country:"México",            countryEn:"Mexico",          tz:"America/Mexico_City",                   lat: 20.67 },
+    { name:"Puebla",                country:"México",            countryEn:"Mexico",          tz:"America/Mexico_City",                   lat: 19.04 },
+    { name:"León",                  country:"México",            countryEn:"Mexico",          tz:"America/Mexico_City",                   lat: 21.12 },
+    { name:"San Luis Potosí",       nameEn:"San Luis Potosi",    country:"México",            countryEn:"Mexico",          tz:"America/Mexico_City",                   lat: 22.15 },
+    { name:"Querétaro",             nameEn:"Queretaro",          country:"México",            countryEn:"Mexico",          tz:"America/Mexico_City",                   lat: 20.59 },
+    { name:"Mérida",                nameEn:"Merida",             country:"México",            countryEn:"Mexico",          tz:"America/Merida",                        lat: 20.97 },
+    { name:"Cancún",                nameEn:"Cancun",             country:"México",            countryEn:"Mexico",          tz:"America/Cancun",                        lat: 21.16 },
+    { name:"Chetumal",              country:"México",            countryEn:"Mexico",          tz:"America/Cancun",                        lat: 18.50 },
+    { name:"Chicago",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 41.85 },
+    { name:"Dallas",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 32.78 },
+    { name:"Houston",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.76 },
+    { name:"San Antonio",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.42 },
+    { name:"Austin",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 30.27 },
+    { name:"Minneapolis",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 44.98 },
+    { name:"Kansas City",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 39.10 },
+    { name:"St. Louis",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 38.63 },
+    { name:"New Orleans",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.95 },
+    { name:"Winnipeg",              country:"Canadá",            countryEn:"Canada",          tz:"America/Winnipeg",                      lat: 49.90 },
+    { name:"Regina",                country:"Canadá",            countryEn:"Canada",          tz:"America/Regina",                        lat: 50.45 },
+    // ── América Central y Caribe ──
+    { name:"Ciudad de Guatemala",   nameEn:"Guatemala City",     country:"Guatemala",         countryEn:"Guatemala",       tz:"America/Guatemala",                     lat: 14.64 },
+    { name:"San Salvador",          country:"El Salvador",       countryEn:"El Salvador",     tz:"America/El_Salvador",                   lat: 13.69 },
+    { name:"Tegucigalpa",           country:"Honduras",          countryEn:"Honduras",        tz:"America/Tegucigalpa",                   lat: 14.10 },
+    { name:"Managua",               country:"Nicaragua",         countryEn:"Nicaragua",       tz:"America/Managua",                       lat: 12.13 },
+    { name:"San José",              country:"Costa Rica",        countryEn:"Costa Rica",      tz:"America/Costa_Rica",                    lat:  9.93 },
+    { name:"Ciudad de Panamá",      nameEn:"Panama City",        country:"Panamá",            countryEn:"Panama",          tz:"America/Panama",                        lat:  8.99 },
+    { name:"La Habana",             nameEn:"Havana",             country:"Cuba",              countryEn:"Cuba",            tz:"America/Havana",                        lat: 23.13 },
+    { name:"Kingston",              country:"Jamaica",           countryEn:"Jamaica",         tz:"America/Jamaica",                       lat: 17.99 },
+    { name:"Nassau",                country:"Bahamas",           countryEn:"Bahamas",         tz:"America/Nassau",                        lat: 25.05 },
+    { name:"Puerto Príncipe",       nameEn:"Port-au-Prince",     country:"Haití",             countryEn:"Haiti",           tz:"America/Port-au-Prince",                lat: 18.54 },
+    { name:"Santo Domingo",         country:"Rep. Dominicana",   countryEn:"Dominican Rep.",  tz:"America/Santo_Domingo",                 lat: 18.47 },
+    { name:"San Juan",              country:"Puerto Rico",       countryEn:"Puerto Rico",     tz:"America/Puerto_Rico",                   lat: 18.47 },
+    { name:"Bridgetown",            country:"Barbados",          countryEn:"Barbados",        tz:"America/Barbados",                      lat: 13.10 },
+    { name:"Puerto España",         nameEn:"Port of Spain",      country:"Trinidad y Tobago", countryEn:"Trinidad & Tobago",tz:"America/Port_of_Spain",                lat: 10.65 },
+    // ── América del Sur ──
+    { name:"Bogotá",                nameEn:"Bogota",             country:"Colombia",          countryEn:"Colombia",        tz:"America/Bogota",                        lat:  4.71 },
+    { name:"Medellín",              nameEn:"Medellin",           country:"Colombia",          countryEn:"Colombia",        tz:"America/Bogota",                        lat:  6.25 },
+    { name:"Cali",                  country:"Colombia",          countryEn:"Colombia",        tz:"America/Bogota",                        lat:  3.44 },
+    { name:"Barranquilla",          country:"Colombia",          countryEn:"Colombia",        tz:"America/Bogota",                        lat: 10.99 },
+    { name:"Caracas",               country:"Venezuela",         countryEn:"Venezuela",       tz:"America/Caracas",                       lat: 10.48 },
+    { name:"Maracaibo",             country:"Venezuela",         countryEn:"Venezuela",       tz:"America/Caracas",                       lat: 10.65 },
+    { name:"Quito",                 country:"Ecuador",           countryEn:"Ecuador",         tz:"America/Guayaquil",                     lat: -0.23 },
+    { name:"Guayaquil",             country:"Ecuador",           countryEn:"Ecuador",         tz:"America/Guayaquil",                     lat: -2.19 },
+    { name:"Isla de Pascua",        nameEn:"Easter Island",      country:"Chile",             countryEn:"Chile",           tz:"Pacific/Easter",                        lat:-27.11 },
+    { name:"Georgetown",            country:"Guyana",            countryEn:"Guyana",          tz:"America/Guyana",                        lat:  6.80 },
+    { name:"Paramaribo",            country:"Surinam",           countryEn:"Suriname",        tz:"America/Paramaribo",                    lat:  5.86 },
+    { name:"Cayena",                nameEn:"Cayenne",            country:"Guayana Francesa",  countryEn:"French Guiana",   tz:"America/Cayenne",                       lat:  4.93 },
+    { name:"Lima",                  country:"Perú",              countryEn:"Peru",            tz:"America/Lima",                          lat:-12.05 },
+    { name:"Cusco",                 nameEn:"Cusco",              country:"Perú",              countryEn:"Peru",            tz:"America/Lima",                          lat:-13.53 },
+    { name:"La Paz",                country:"Bolivia",           countryEn:"Bolivia",         tz:"America/La_Paz",                        lat:-16.50 },
+    { name:"Santa Cruz",            country:"Bolivia",           countryEn:"Bolivia",         tz:"America/La_Paz",                        lat:-17.80 },
+    { name:"Asunción",              nameEn:"Asuncion",           country:"Paraguay",          countryEn:"Paraguay",        tz:"America/Asuncion",                      lat:-25.29 },
+    { name:"Manaus",                country:"Brasil",            countryEn:"Brazil",          tz:"America/Manaus",                        lat: -3.10 },
+    { name:"Belém",                 country:"Brasil",            countryEn:"Brazil",          tz:"America/Belem",                         lat: -1.46 },
+    { name:"Fortaleza",             country:"Brasil",            countryEn:"Brazil",          tz:"America/Fortaleza",                     lat: -3.72 },
+    { name:"Recife",                country:"Brasil",            countryEn:"Brazil",          tz:"America/Recife",                        lat: -8.05 },
+    { name:"Salvador",              country:"Brasil",            countryEn:"Brazil",          tz:"America/Bahia",                         lat:-12.97 },
+    { name:"Brasília",              country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-15.78 },
+    { name:"Río de Janeiro",        nameEn:"Rio de Janeiro",     country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-22.90 },
+    { name:"São Paulo",             nameEn:"Sao Paulo",          country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-23.55 },
+    { name:"Porto Alegre",          country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-30.03 },
+    { name:"Santiago",              country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-33.45 },
+    { name:"Valparaíso",            nameEn:"Valparaiso",         country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-33.05 },
+    { name:"Talca",                 country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-35.43 },
+    { name:"Temuco",                country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-38.74 },
+    { name:"Antofagasta",           country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-23.65 },
+    { name:"La Serena",             country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-29.91 },
+    { name:"Concepción",            country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-36.82 },
+    { name:"Puerto Montt",          country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-41.47 },
+    { name:"Punta Arenas",          country:"Chile",             countryEn:"Chile",           tz:"America/Punta_Arenas",                  lat:-53.16 },
+    { name:"Montevideo",            country:"Uruguay",           countryEn:"Uruguay",         tz:"America/Montevideo",                    lat:-34.90 },
+    { name:"Buenos Aires",          country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Buenos_Aires",        lat:-34.61 },
+    { name:"Córdoba",               nameEn:"Cordoba",            country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Cordoba",             lat:-31.41 },
+    { name:"Rosario",               country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Cordoba",             lat:-32.95 },
+    { name:"Mendoza",               country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Mendoza",             lat:-32.89 },
+    { name:"Salta",                 country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Salta",               lat:-24.78 },
+    { name:"Bariloche",             country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Salta",               lat:-41.13 },
+    { name:"Ushuaia",               country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Ushuaia",             lat:-54.80 },
+    // ── Este de EE. UU. / Canadá ──
+    { name:"Atlanta",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 33.75 },
+    { name:"Miami",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 25.77 },
+    { name:"Orlando",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 28.54 },
+    { name:"Tampa",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 27.95 },
+    { name:"Charlotte",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 35.23 },
+    { name:"Washington D.C.",       country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 38.91 },
+    { name:"Philadelphia",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.95 },
+    { name:"Nueva York",            nameEn:"New York",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 40.71 },
+    { name:"Boston",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 42.36 },
+    { name:"Detroit",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Detroit",                       lat: 42.33 },
+    { name:"Columbus",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.96 },
+    { name:"Indianapolis",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/Indiana/Indianapolis",          lat: 39.77 },
+    { name:"Toronto",               country:"Canadá",            countryEn:"Canada",          tz:"America/Toronto",                       lat: 43.65 },
+    { name:"Ottawa",                country:"Canadá",            countryEn:"Canada",          tz:"America/Toronto",                       lat: 45.42 },
+    { name:"Montreal",              country:"Canadá",            countryEn:"Canada",          tz:"America/Toronto",                       lat: 45.51 },
+    { name:"Halifax",               country:"Canadá",            countryEn:"Canada",          tz:"America/Halifax",                       lat: 44.65 },
+    { name:"St. John's",            country:"Canadá",            countryEn:"Canada",          tz:"America/St_Johns",                      lat: 47.56 },
+    // ── Europa ──
+    { name:"Reikiavik",             nameEn:"Reykjavik",          country:"Islandia",          countryEn:"Iceland",         tz:"Atlantic/Reykjavik",                    lat: 64.13 },
+    { name:"Londres",               nameEn:"London",             country:"Reino Unido",       countryEn:"United Kingdom",  tz:"Europe/London",                         lat: 51.51 },
+    { name:"Dublín",                nameEn:"Dublin",             country:"Irlanda",           countryEn:"Ireland",         tz:"Europe/Dublin",                         lat: 53.33 },
+    { name:"Lisboa",                country:"Portugal",          countryEn:"Portugal",        tz:"Europe/Lisbon",                         lat: 38.72 },
+    { name:"Azores",                country:"Portugal",          countryEn:"Portugal",        tz:"Atlantic/Azores",                       lat: 37.74 },
+    { name:"Madrid",                country:"España",            countryEn:"Spain",           tz:"Europe/Madrid",                         lat: 40.42 },
+    { name:"Barcelona",             country:"España",            countryEn:"Spain",           tz:"Europe/Madrid",                         lat: 41.39 },
+    { name:"Sevilla",               nameEn:"Seville",            country:"España",            countryEn:"Spain",           tz:"Europe/Madrid",                         lat: 37.39 },
+    { name:"Valencia",              country:"España",            countryEn:"Spain",           tz:"Europe/Madrid",                         lat: 39.47 },
+    { name:"Palma de Mallorca",     country:"España",            countryEn:"Spain",           tz:"Europe/Madrid",                         lat: 39.57 },
+    { name:"Las Palmas",            country:"España",            countryEn:"Spain",           tz:"Atlantic/Canary",                       lat: 28.13 },
+    { name:"París",                 nameEn:"Paris",              country:"Francia",           countryEn:"France",          tz:"Europe/Paris",                          lat: 48.85 },
+    { name:"Lyon",                  country:"Francia",           countryEn:"France",          tz:"Europe/Paris",                          lat: 45.75 },
+    { name:"Marsella",              nameEn:"Marseille",          country:"Francia",           countryEn:"France",          tz:"Europe/Paris",                          lat: 43.30 },
+    { name:"Bruselas",              nameEn:"Brussels",           country:"Bélgica",           countryEn:"Belgium",         tz:"Europe/Brussels",                       lat: 50.85 },
+    { name:"Ámsterdam",             nameEn:"Amsterdam",          country:"Países Bajos",      countryEn:"Netherlands",     tz:"Europe/Amsterdam",                      lat: 52.37 },
+    { name:"Zúrich",                nameEn:"Zurich",             country:"Suiza",             countryEn:"Switzerland",     tz:"Europe/Zurich",                         lat: 47.38 },
+    { name:"Ginebra",               nameEn:"Geneva",             country:"Suiza",             countryEn:"Switzerland",     tz:"Europe/Zurich",                         lat: 46.20 },
+    { name:"Roma",                  nameEn:"Rome",               country:"Italia",            countryEn:"Italy",           tz:"Europe/Rome",                           lat: 41.90 },
+    { name:"Milán",                 nameEn:"Milan",              country:"Italia",            countryEn:"Italy",           tz:"Europe/Rome",                           lat: 45.47 },
+    { name:"Nápoles",               nameEn:"Naples",             country:"Italia",            countryEn:"Italy",           tz:"Europe/Rome",                           lat: 40.85 },
+    { name:"Berlín",                nameEn:"Berlin",             country:"Alemania",          countryEn:"Germany",         tz:"Europe/Berlin",                         lat: 52.52 },
+    { name:"Hamburgo",              nameEn:"Hamburg",            country:"Alemania",          countryEn:"Germany",         tz:"Europe/Berlin",                         lat: 53.55 },
+    { name:"Múnich",                nameEn:"Munich",             country:"Alemania",          countryEn:"Germany",         tz:"Europe/Berlin",                         lat: 48.14 },
+    { name:"Fráncfort",             nameEn:"Frankfurt",          country:"Alemania",          countryEn:"Germany",         tz:"Europe/Berlin",                         lat: 50.11 },
+    { name:"Viena",                 country:"Austria",           countryEn:"Austria",         tz:"Europe/Vienna",                         lat: 48.21 },
+    { name:"Praga",                 country:"Rep. Checa",        countryEn:"Czech Rep.",      tz:"Europe/Prague",                         lat: 50.08 },
+    { name:"Varsovia",              nameEn:"Warsaw",             country:"Polonia",           countryEn:"Poland",          tz:"Europe/Warsaw",                         lat: 52.23 },
+    { name:"Cracovia",              nameEn:"Krakow",             country:"Polonia",           countryEn:"Poland",          tz:"Europe/Warsaw",                         lat: 50.06 },
+    { name:"Budapest",              country:"Hungría",           countryEn:"Hungary",         tz:"Europe/Budapest",                       lat: 47.50 },
+    { name:"Bucarest",              nameEn:"Bucharest",          country:"Rumanía",           countryEn:"Romania",         tz:"Europe/Bucharest",                      lat: 44.43 },
+    { name:"Sofía",                 nameEn:"Sofia",              country:"Bulgaria",          countryEn:"Bulgaria",        tz:"Europe/Sofia",                          lat: 42.70 },
+    { name:"Atenas",                nameEn:"Athens",             country:"Grecia",            countryEn:"Greece",          tz:"Europe/Athens",                         lat: 37.98 },
+    { name:"Belgrado",              country:"Serbia",            countryEn:"Serbia",          tz:"Europe/Belgrade",                       lat: 44.82 },
+    { name:"Zagreb",                country:"Croacia",           countryEn:"Croatia",         tz:"Europe/Zagreb",                         lat: 45.81 },
+    { name:"Liubliana",             nameEn:"Ljubljana",          country:"Eslovenia",         countryEn:"Slovenia",        tz:"Europe/Ljubljana",                      lat: 46.05 },
+    { name:"Bratislava",            country:"Eslovaquia",        countryEn:"Slovakia",        tz:"Europe/Bratislava",                     lat: 48.15 },
+    { name:"Kiev",                  nameEn:"Kyiv",               country:"Ucrania",           countryEn:"Ukraine",         tz:"Europe/Kyiv",                           lat: 50.45 },
+    { name:"Moscú",                 nameEn:"Moscow",             country:"Rusia",             countryEn:"Russia",          tz:"Europe/Moscow",                         lat: 55.75 },
+    { name:"San Petersburgo",       nameEn:"St. Petersburg",     country:"Rusia",             countryEn:"Russia",          tz:"Europe/Moscow",                         lat: 59.95 },
+    { name:"Helsinki",              country:"Finlandia",         countryEn:"Finland",         tz:"Europe/Helsinki",                       lat: 60.17 },
+    { name:"Tallin",                nameEn:"Tallinn",            country:"Estonia",           countryEn:"Estonia",         tz:"Europe/Tallinn",                        lat: 59.44 },
+    { name:"Riga",                  country:"Letonia",           countryEn:"Latvia",          tz:"Europe/Riga",                           lat: 56.95 },
+    { name:"Vilna",                 nameEn:"Vilnius",            country:"Lituania",          countryEn:"Lithuania",       tz:"Europe/Vilnius",                        lat: 54.69 },
+    { name:"Minsk",                 country:"Bielorrusia",       countryEn:"Belarus",         tz:"Europe/Minsk",                          lat: 53.90 },
+    { name:"Oslo",                  country:"Noruega",           countryEn:"Norway",          tz:"Europe/Oslo",                           lat: 59.91 },
+    { name:"Estocolmo",             nameEn:"Stockholm",          country:"Suecia",            countryEn:"Sweden",          tz:"Europe/Stockholm",                      lat: 59.33 },
+    { name:"Gotemburgo",            nameEn:"Gothenburg",         country:"Suecia",            countryEn:"Sweden",          tz:"Europe/Stockholm",                      lat: 57.71 },
+    { name:"Copenhague",            nameEn:"Copenhagen",         country:"Dinamarca",         countryEn:"Denmark",         tz:"Europe/Copenhagen",                     lat: 55.68 },
+    { name:"Nicosia",               country:"Chipre",            countryEn:"Cyprus",          tz:"Asia/Nicosia",                          lat: 35.17 },
+    // ── Oriente Medio y África ──
+    { name:"Estambul",              nameEn:"Istanbul",           country:"Turquía",           countryEn:"Turkey",          tz:"Europe/Istanbul",                       lat: 41.01 },
+    { name:"Ankara",                country:"Turquía",           countryEn:"Turkey",          tz:"Europe/Istanbul",                       lat: 39.93 },
+    { name:"Beirut",                country:"Líbano",            countryEn:"Lebanon",         tz:"Asia/Beirut",                           lat: 33.89 },
+    { name:"Ammán",                 nameEn:"Amman",              country:"Jordania",          countryEn:"Jordan",          tz:"Asia/Amman",                            lat: 31.95 },
+    { name:"Jerusalén",             nameEn:"Jerusalem",          country:"Israel",            countryEn:"Israel",          tz:"Asia/Jerusalem",                        lat: 31.78 },
+    { name:"Tel Aviv",              country:"Israel",            countryEn:"Israel",          tz:"Asia/Jerusalem",                        lat: 32.07 },
+    { name:"Damasco",               nameEn:"Damascus",           country:"Siria",             countryEn:"Syria",           tz:"Asia/Damascus",                         lat: 33.51 },
+    { name:"Bagdad",                nameEn:"Baghdad",            country:"Irak",              countryEn:"Iraq",            tz:"Asia/Baghdad",                          lat: 33.34 },
+    { name:"Kuwait City",           country:"Kuwait",            countryEn:"Kuwait",          tz:"Asia/Kuwait",                           lat: 29.37 },
+    { name:"Riad",                  nameEn:"Riyadh",             country:"Arabia Saudita",    countryEn:"Saudi Arabia",    tz:"Asia/Riyadh",                           lat: 24.69 },
+    { name:"Jeddah",                country:"Arabia Saudita",    countryEn:"Saudi Arabia",    tz:"Asia/Riyadh",                           lat: 21.54 },
+    { name:"Doha",                  country:"Catar",             countryEn:"Qatar",           tz:"Asia/Qatar",                            lat: 25.29 },
+    { name:"Abu Dabi",              nameEn:"Abu Dhabi",          country:"Emiratos Árabes",   countryEn:"UAE",             tz:"Asia/Dubai",                            lat: 24.47 },
+    { name:"Dubái",                 nameEn:"Dubai",              country:"Emiratos Árabes",   countryEn:"UAE",             tz:"Asia/Dubai",                            lat: 25.20 },
+    { name:"Mascate",               nameEn:"Muscat",             country:"Omán",              countryEn:"Oman",            tz:"Asia/Muscat",                           lat: 23.61 },
+    { name:"Teherán",               nameEn:"Tehran",             country:"Irán",              countryEn:"Iran",            tz:"Asia/Tehran",                           lat: 35.69 },
+    { name:"Kabul",                 country:"Afganistán",        countryEn:"Afghanistan",     tz:"Asia/Kabul",                            lat: 34.53 },
+    { name:"Casablanca",            country:"Marruecos",         countryEn:"Morocco",         tz:"Africa/Casablanca",                     lat: 33.59 },
+    { name:"Rabat",                 country:"Marruecos",         countryEn:"Morocco",         tz:"Africa/Casablanca",                     lat: 34.02 },
+    { name:"Túnez",                 country:"Túnez",             countryEn:"Tunisia",         tz:"Africa/Tunis",                          lat: 36.82 },
+    { name:"Argel",                 country:"Argelia",           countryEn:"Algeria",         tz:"Africa/Algiers",                        lat: 36.74 },
+    { name:"Trípoli",               country:"Libia",             countryEn:"Libya",           tz:"Africa/Tripoli",                        lat: 32.90 },
+    { name:"El Cairo",              nameEn:"Cairo",              country:"Egipto",            countryEn:"Egypt",           tz:"Africa/Cairo",                          lat: 30.06 },
+    { name:"Alejandría",            nameEn:"Alexandria",         country:"Egipto",            countryEn:"Egypt",           tz:"Africa/Cairo",                          lat: 31.20 },
+    { name:"Jartum",                nameEn:"Khartoum",           country:"Sudán",             countryEn:"Sudan",           tz:"Africa/Khartoum",                       lat: 15.55 },
+    { name:"Adís Abeba",            nameEn:"Addis Ababa",        country:"Etiopía",           countryEn:"Ethiopia",        tz:"Africa/Addis_Ababa",                    lat:  9.02 },
+    { name:"Kampala",               country:"Uganda",            countryEn:"Uganda",          tz:"Africa/Kampala",                        lat:  0.32 },
+    { name:"Nairobi",               country:"Kenia",             countryEn:"Kenya",           tz:"Africa/Nairobi",                        lat: -1.29 },
+    { name:"Dar es Salam",          country:"Tanzania",          countryEn:"Tanzania",        tz:"Africa/Dar_es_Salaam",                  lat: -6.80 },
+    { name:"Dakar",                 country:"Senegal",           countryEn:"Senegal",         tz:"Africa/Dakar",                          lat: 14.69 },
+    { name:"Lagos",                 country:"Nigeria",           countryEn:"Nigeria",         tz:"Africa/Lagos",                          lat:  6.45 },
+    { name:"Abuja",                 country:"Nigeria",           countryEn:"Nigeria",         tz:"Africa/Lagos",                          lat:  9.06 },
+    { name:"Acra",                  country:"Ghana",             countryEn:"Ghana",           tz:"Africa/Accra",                          lat:  5.56 },
+    { name:"Abiyán",                country:"Costa de Marfil",   countryEn:"Ivory Coast",     tz:"Africa/Abidjan",                        lat:  5.35 },
+    { name:"Kinshasa",              country:"R.D. Congo",        countryEn:"D.R. Congo",      tz:"Africa/Kinshasa",                       lat: -4.32 },
+    { name:"Luanda",                country:"Angola",            countryEn:"Angola",          tz:"Africa/Luanda",                         lat: -8.84 },
+    { name:"Harare",                country:"Zimbabue",          countryEn:"Zimbabwe",        tz:"Africa/Harare",                         lat:-17.83 },
+    { name:"Maputo",                country:"Mozambique",        countryEn:"Mozambique",      tz:"Africa/Maputo",                         lat:-25.97 },
+    { name:"Johannesburgo",         nameEn:"Johannesburg",       country:"Sudáfrica",         countryEn:"South Africa",    tz:"Africa/Johannesburg",                   lat:-26.20 },
+    { name:"Ciudad del Cabo",       nameEn:"Cape Town",          country:"Sudáfrica",         countryEn:"South Africa",    tz:"Africa/Johannesburg",                   lat:-33.93 },
+    // ── Asia ──
+    { name:"Karachi",               country:"Pakistán",          countryEn:"Pakistan",        tz:"Asia/Karachi",                          lat: 24.86 },
+    { name:"Islamabad",             country:"Pakistán",          countryEn:"Pakistan",        tz:"Asia/Karachi",                          lat: 33.72 },
+    { name:"Lahore",                country:"Pakistán",          countryEn:"Pakistan",        tz:"Asia/Karachi",                          lat: 31.55 },
+    { name:"Delhi",                 country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 28.66 },
+    { name:"Mumbai",                country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 19.08 },
+    { name:"Kolkata",               country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 22.57 },
+    { name:"Hyderabad",             country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 17.38 },
+    { name:"Bangalore",             country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 12.97 },
+    { name:"Chennai",               country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 13.08 },
+    { name:"Katmandú",              country:"Nepal",             countryEn:"Nepal",           tz:"Asia/Kathmandu",                        lat: 27.72 },
+    { name:"Dhaka",                 country:"Bangladesh",        countryEn:"Bangladesh",      tz:"Asia/Dhaka",                            lat: 23.72 },
+    { name:"Colombo",               country:"Sri Lanka",         countryEn:"Sri Lanka",       tz:"Asia/Colombo",                          lat:  6.93 },
+    { name:"Rangún",                nameEn:"Yangon",             country:"Myanmar",           countryEn:"Myanmar",         tz:"Asia/Rangoon",                          lat: 16.87 },
+    { name:"Bangkok",               country:"Tailandia",         countryEn:"Thailand",        tz:"Asia/Bangkok",                          lat: 13.75 },
+    { name:"Vientián",              nameEn:"Vientiane",          country:"Laos",              countryEn:"Laos",            tz:"Asia/Vientiane",                        lat: 17.97 },
+    { name:"Phnom Penh",            country:"Camboya",           countryEn:"Cambodia",        tz:"Asia/Phnom_Penh",                       lat: 11.55 },
+    { name:"Hanói",                 nameEn:"Hanoi",              country:"Vietnam",           countryEn:"Vietnam",         tz:"Asia/Ho_Chi_Minh",                      lat: 21.03 },
+    { name:"Ho Chi Minh",           country:"Vietnam",           countryEn:"Vietnam",         tz:"Asia/Ho_Chi_Minh",                      lat: 10.82 },
+    { name:"Kuala Lumpur",          country:"Malasia",           countryEn:"Malaysia",        tz:"Asia/Kuala_Lumpur",                     lat:  3.15 },
+    { name:"Singapur",              nameEn:"Singapore",          country:"Singapur",          countryEn:"Singapore",       tz:"Asia/Singapore",                        lat:  1.28 },
+    { name:"Yakarta",               nameEn:"Jakarta",            country:"Indonesia",         countryEn:"Indonesia",       tz:"Asia/Jakarta",                          lat: -6.21 },
+    { name:"Bali",                  country:"Indonesia",         countryEn:"Indonesia",       tz:"Asia/Makassar",                         lat: -8.34 },
+    { name:"Manila",                country:"Filipinas",         countryEn:"Philippines",     tz:"Asia/Manila",                           lat: 14.60 },
+    { name:"Hong Kong",             country:"China",             countryEn:"China",           tz:"Asia/Hong_Kong",                        lat: 22.28 },
+    { name:"Taipéi",                nameEn:"Taipei",             country:"Taiwán",            countryEn:"Taiwan",          tz:"Asia/Taipei",                           lat: 25.04 },
+    { name:"Guangzhou",             country:"China",             countryEn:"China",           tz:"Asia/Shanghai",                         lat: 23.13 },
+    { name:"Shanghái",              nameEn:"Shanghai",           country:"China",             countryEn:"China",           tz:"Asia/Shanghai",                         lat: 31.23 },
+    { name:"Chongqing",             country:"China",             countryEn:"China",           tz:"Asia/Shanghai",                         lat: 29.56 },
+    { name:"Pekín",                 nameEn:"Beijing",            country:"China",             countryEn:"China",           tz:"Asia/Shanghai",                         lat: 39.91 },
+    { name:"Pyongyang",             country:"Corea del Norte",   countryEn:"North Korea",     tz:"Asia/Pyongyang",                        lat: 39.02 },
+    { name:"Seúl",                  nameEn:"Seoul",              country:"Corea del Sur",     countryEn:"South Korea",     tz:"Asia/Seoul",                            lat: 37.57 },
+    { name:"Osaka",                 country:"Japón",             countryEn:"Japan",           tz:"Asia/Tokyo",                            lat: 34.69 },
+    { name:"Tokio",                 nameEn:"Tokyo",              country:"Japón",             countryEn:"Japan",           tz:"Asia/Tokyo",                            lat: 35.68 },
+    { name:"Sapporo",               country:"Japón",             countryEn:"Japan",           tz:"Asia/Tokyo",                            lat: 43.06 },
+    { name:"Ulán Bator",            nameEn:"Ulaanbaatar",        country:"Mongolia",          countryEn:"Mongolia",        tz:"Asia/Ulaanbaatar",                      lat: 47.91 },
+    { name:"Almaty",                country:"Kazajistán",        countryEn:"Kazakhstan",      tz:"Asia/Almaty",                           lat: 43.27 },
+    { name:"Taskent",               country:"Uzbekistán",        countryEn:"Uzbekistan",      tz:"Asia/Tashkent",                         lat: 41.30 },
+    { name:"Bakú",                  country:"Azerbaiyán",        countryEn:"Azerbaijan",      tz:"Asia/Baku",                             lat: 40.38 },
+    { name:"Tiflis",                country:"Georgia",           countryEn:"Georgia",         tz:"Asia/Tbilisi",                          lat: 41.69 },
+    { name:"Ereván",                country:"Armenia",           countryEn:"Armenia",         tz:"Asia/Yerevan",                          lat: 40.18 },
+    { name:"Ekaterimburgo",         country:"Rusia",             countryEn:"Russia",          tz:"Asia/Yekaterinburg",                    lat: 56.83 },
+    { name:"Novosibirsk",           country:"Rusia",             countryEn:"Russia",          tz:"Asia/Novosibirsk",                      lat: 54.99 },
+    { name:"Vladivostok",           country:"Rusia",             countryEn:"Russia",          tz:"Asia/Vladivostok",                      lat: 43.13 },
+    // ── Oceanía ──
+    { name:"Perth",                 country:"Australia",         countryEn:"Australia",       tz:"Australia/Perth",                       lat:-31.95 },
+    { name:"Adelaida",              country:"Australia",         countryEn:"Australia",       tz:"Australia/Adelaide",                    lat:-34.93 },
+    { name:"Darwin",                country:"Australia",         countryEn:"Australia",       tz:"Australia/Darwin",                      lat:-12.46 },
+    { name:"Brisbane",              country:"Australia",         countryEn:"Australia",       tz:"Australia/Brisbane",                    lat:-27.47 },
+    { name:"Sídney",                nameEn:"Sydney",             country:"Australia",         countryEn:"Australia",       tz:"Australia/Sydney",                      lat:-33.87 },
+    { name:"Melbourne",             country:"Australia",         countryEn:"Australia",       tz:"Australia/Melbourne",                   lat:-37.81 },
+    { name:"Auckland",              country:"Nueva Zelanda",     countryEn:"New Zealand",     tz:"Pacific/Auckland",                      lat:-36.87 },
+    { name:"Wellington",            country:"Nueva Zelanda",     countryEn:"New Zealand",     tz:"Pacific/Auckland",                      lat:-41.29 },
+    { name:"Suva",                  country:"Fiyi",              countryEn:"Fiji",            tz:"Pacific/Fiji",                          lat:-18.14 },
+    { name:"Nukualofa",             country:"Tonga",             countryEn:"Tonga",           tz:"Pacific/Tongatapu",                     lat:-21.14 },
+    { name:"Apia",                  country:"Samoa",             countryEn:"Samoa",           tz:"Pacific/Apia",                          lat:-13.83 },
+    { name:"Papeete",               country:"Polinesia Francesa",countryEn:"French Polynesia",tz:"Pacific/Tahiti",                        lat:-17.53 },
+    { name:"Noumea",                country:"Nueva Caledonia",   countryEn:"New Caledonia",   tz:"Pacific/Noumea",                        lat:-22.27 },
+];
+
+// Look up the full CITIES entry for a stored city (handles objects saved before new fields were added)
+function lookupCity(stored) {
+    return CITIES.find(c => c.name === stored.name && c.tz === stored.tz) || stored;
+}
+
+function cityName(city) {
+    const full = lookupCity(city);
+    return (currentLang === 'en' && full.nameEn) ? full.nameEn : full.name;
+}
+
+function cityCountry(city) {
+    const full = lookupCity(city);
+    return (currentLang === 'en' && full.countryEn) ? full.countryEn : full.country;
+}
+
+function loadCities() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) selectedCities = JSON.parse(raw);
+    } catch { selectedCities = []; }
+}
+
+function saveCities() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedCities));
+}
+
+function cityKey(c) { return c.name + '||' + c.tz; }
+
+function addCity(city) {
+    if (selectedCities.some(c => cityKey(c) === cityKey(city))) return;
+    selectedCities.push(city);
+    saveCities();
+    renderFull();
+}
+
+function removeCity(key) {
+    selectedCities = selectedCities.filter(c => cityKey(c) !== key);
+    saveCities();
+    renderFull();
+}
+
+function getSecondOfDay(tz) {
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('en', {
+        hour: 'numeric', minute: 'numeric', second: 'numeric',
+        hour12: false, hourCycle: 'h23', timeZone: tz
+    }).formatToParts(now);
+    const h = parseInt(parts.find(p => p.type === 'hour').value);
+    const m = parseInt(parts.find(p => p.type === 'minute').value);
+    const s = parseInt(parts.find(p => p.type === 'second').value);
+    return h * 3600 + m * 60 + s;
+}
+
+function sortedCities() {
+    return [...selectedCities].sort((a, b) => {
+        const dt = getSecondOfDay(a.tz) - getSecondOfDay(b.tz);
+        return dt !== 0 ? dt : b.lat - a.lat;
+    });
+}
+
+function formatTime(tz) {
+    return new Intl.DateTimeFormat(t('dateLocale'), {
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false, hourCycle: 'h23', timeZone: tz
+    }).format(new Date());
+}
+
+function formatDate(tz) {
+    return new Intl.DateTimeFormat(t('dateLocale'), {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+        timeZone: tz
+    }).format(new Date());
+}
+
+function formatOffset(tz) {
+    const parts = new Intl.DateTimeFormat('en', {
+        timeZone: tz, timeZoneName: 'shortOffset'
+    }).formatToParts(new Date());
+    return parts.find(p => p.type === 'timeZoneName')?.value ?? tz;
+}
+
+function renderFull() {
+    const grid = document.getElementById('grid');
+
+    if (selectedCities.length === 0) {
+        grid.innerHTML = `
+            <div class="empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <p>${t('empty')}</p>
+            </div>`;
+        lastSortKeys = '';
+        return;
+    }
+
+    const sorted = sortedCities();
+    lastSortKeys = sorted.map(cityKey).join('|');
+
+    grid.innerHTML = sorted.map(city => {
+        const key = cityKey(city);
+        return `
+        <div class="card" data-key="${escHtml(key)}">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="city-name">${escHtml(cityName(city))}</div>
+                    <div class="city-country">${escHtml(cityCountry(city))}</div>
+                </div>
+                <button class="remove-btn" onclick="removeCity('${escAttr(key)}')" title="${escAttr(t('remove'))}">&#x2715;</button>
+            </div>
+            <div class="city-time" data-tz="${escAttr(city.tz)}">${formatTime(city.tz)}</div>
+            <div class="city-date" data-tz-date="${escAttr(city.tz)}">${formatDate(city.tz)}</div>
+            <div class="city-offset">${escHtml(formatOffset(city.tz))}</div>
+        </div>`;
+    }).join('');
+}
+
+function tickUpdate() {
+    if (selectedCities.length === 0) return;
+
+    const sorted  = sortedCities();
+    const newKeys = sorted.map(cityKey).join('|');
+
+    if (newKeys !== lastSortKeys) { renderFull(); return; }
+
+    document.querySelectorAll('[data-tz]').forEach(el => {
+        el.textContent = formatTime(el.dataset.tz);
+    });
+    document.querySelectorAll('[data-tz-date]').forEach(el => {
+        el.textContent = formatDate(el.dataset.tzDate);
+    });
+}
+
+function escHtml(s) {
+    return String(s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function escAttr(s) {
+    return String(s).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+}
+
+// ── Search ────────────────────────────────────────────────────────────────────
+const searchInput = document.getElementById('searchInput');
+const dropdown    = document.getElementById('dropdown');
+
+function normalize(s) {
+    return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+searchInput.addEventListener('input', () => {
+    const q = normalize(searchInput.value.trim());
+    if (!q) { closeDropdown(); return; }
+
+    const results = CITIES.filter(c =>
+        normalize(c.name).includes(q) ||
+        normalize(c.nameEn || '').includes(q) ||
+        normalize(c.country).includes(q) ||
+        normalize(c.countryEn || '').includes(q)
+    ).slice(0, 12);
+
+    if (!results.length) {
+        dropdown.innerHTML = `<div class="no-results">${t('noResults')}</div>`;
+        dropdown.classList.add('open');
+        return;
+    }
+
+    dropdown.innerHTML = results.map(c =>
+        `<div class="dropdown-item" onclick="pickCity(${CITIES.indexOf(c)})">
+            <span class="di-name">${escHtml(cityName(c))}</span>
+            <span class="di-country">${escHtml(cityCountry(c))}</span>
+            <span class="di-tz">${escHtml(formatOffset(c.tz))}</span>
+        </div>`
+    ).join('');
+    dropdown.classList.add('open');
+});
+
+function pickCity(idx) {
+    addCity(CITIES[idx]);
+    searchInput.value = '';
+    closeDropdown();
+    searchInput.focus();
+}
+
+function closeDropdown() {
+    dropdown.classList.remove('open');
+    dropdown.innerHTML = '';
+}
+
+document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrapper')) closeDropdown();
+});
+
+searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeDropdown(); searchInput.blur(); }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark', false);
+loadCities();
+applyLang(detectLang(), false);   // renders grid + sets all UI strings
+setInterval(tickUpdate, 1000);
+</script>
+</body>
+</html>
