@@ -268,6 +268,12 @@
         .city-date   { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; text-transform: capitalize; }
         .city-offset { font-size: 0.72rem; color: var(--text-dim);   margin-top: 0.4rem; }
 
+        /* ── Drag & drop ── */
+        .card[draggable="true"] { cursor: grab; }
+        .card[draggable="true"]:active { cursor: grabbing; }
+        .card.dragging  { opacity: 0.35; }
+        .card.drag-over { border-color: var(--border-focus); border-style: dashed; }
+
         .dst-badge {
             display: inline-flex;
             align-items: center;
@@ -320,6 +326,7 @@
         <h1 id="appTitle"></h1>
         <div class="header-controls">
             <button class="ctrl-btn" id="langBtn" title="Change language / Cambiar idioma"></button>
+            <button class="ctrl-btn" id="ordBtn" style="display:none">ORD</button>
             <button class="ctrl-btn" id="themeBtn" title=""></button>
         </div>
     </div>
@@ -353,6 +360,7 @@ const TRANSLATIONS = {
         remove:       'Eliminar',
         setHome:      'Marcar como ciudad de inicio',
         unsetHome:    'Quitar ciudad de inicio',
+        sortCities:   'Ordenar por zona horaria',
         changeTheme:  'Cambiar tema',
         footer:       'Creado por Miguel gracias a <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>',
         dateLocale:   'es',
@@ -366,6 +374,7 @@ const TRANSLATIONS = {
         remove:       'Remove',
         setHome:      'Set as home city',
         unsetHome:    'Unset home city',
+        sortCities:   'Sort by timezone',
         changeTheme:  'Change theme',
         footer:       'Created by Miguel thanks to <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>',
         dateLocale:   'en',
@@ -378,7 +387,6 @@ const LANG_KEY    = 'worldtime_lang';
 const HOME_KEY    = 'worldtime_home';
 
 let selectedCities = [];
-let lastSortKeys   = '';
 let currentLang    = 'es';
 let homeCity       = null;  // cityKey string of the home city, or null
 
@@ -401,6 +409,7 @@ function applyLang(lang, save = true) {
     document.title = t('pageTitle');
     document.getElementById('searchInput').placeholder = t('placeholder');
     document.getElementById('langBtn').textContent  = lang === 'es' ? 'EN' : 'ES';
+    document.getElementById('ordBtn').title          = t('sortCities');
     document.getElementById('themeBtn').title        = t('changeTheme');
     document.getElementById('footer').innerHTML      = t('footer');
 
@@ -805,11 +814,21 @@ function getSecondOfDay(tz) {
     return dayEpoch * 86400 + get('hour') * 3600 + get('minute') * 60 + get('second');
 }
 
+const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
 function sortedCities() {
-    return [...selectedCities].sort((a, b) => {
+    return [...selectedCities];
+}
+
+function sortByTimezone() {
+    selectedCities.sort((a, b) => {
         const dt = getSecondOfDay(a.tz) - getSecondOfDay(b.tz);
-        return dt !== 0 ? dt : b.lat - a.lat;
+        if (dt !== 0) return dt;
+        const fa = lookupCity(a), fb = lookupCity(b);
+        return (fb.lat ?? 0) - (fa.lat ?? 0);
     });
+    saveCities();
+    renderFull();
 }
 
 function formatTime(tz) {
@@ -845,18 +864,17 @@ function renderFull() {
                 </svg>
                 <p>${t('empty')}</p>
             </div>`;
-        lastSortKeys = '';
         return;
     }
 
     const sorted = sortedCities();
-    lastSortKeys = sorted.map(cityKey).join('|');
 
     grid.innerHTML = sorted.map(city => {
         const key    = cityKey(city);
         const isHome = homeCity === key;
+        const drag   = isDesktop ? ' draggable="true"' : '';
         return `
-        <div class="card${isHome ? ' home' : ''}" data-key="${escHtml(key)}">
+        <div class="card${isHome ? ' home' : ''}"${drag} data-key="${escHtml(key)}">
             <div class="card-header">
                 <div class="card-title">
                     <div class="city-name">${escHtml(cityName(city))}</div>
@@ -870,16 +888,12 @@ function renderFull() {
             <div class="city-offset" data-tz-offset="${escAttr(city.tz)}">${escHtml(formatOffset(city.tz))}${isInDST(city.tz) ? '<em class="dst-badge">☀ DST</em>' : ''}</div>
         </div>`;
     }).join('');
+
+    if (isDesktop) initDrag();
 }
 
 function tickUpdate() {
     if (selectedCities.length === 0) return;
-
-    const sorted  = sortedCities();
-    const newKeys = sorted.map(cityKey).join('|');
-
-    if (newKeys !== lastSortKeys) { renderFull(); return; }
-
     document.querySelectorAll('[data-tz]').forEach(el => {
         el.textContent = formatTime(el.dataset.tz);
     });
@@ -955,6 +969,48 @@ document.addEventListener('click', e => {
 searchInput.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeDropdown(); searchInput.blur(); }
 });
+
+// ── Drag & drop ───────────────────────────────────────────────────────────────
+let dragSrcKey = null;
+
+function initDrag() {
+    document.querySelectorAll('.card[draggable]').forEach(card => {
+        card.addEventListener('dragstart', e => {
+            dragSrcKey = card.dataset.key;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
+        });
+        card.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (card.dataset.key !== dragSrcKey) card.classList.add('drag-over');
+        });
+        card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+        card.addEventListener('drop', e => {
+            e.preventDefault();
+            card.classList.remove('drag-over');
+            const targetKey = card.dataset.key;
+            if (!dragSrcKey || dragSrcKey === targetKey) return;
+            const srcIdx = selectedCities.findIndex(c => cityKey(c) === dragSrcKey);
+            const tgtIdx = selectedCities.findIndex(c => cityKey(c) === targetKey);
+            if (srcIdx === -1 || tgtIdx === -1) return;
+            const [moved] = selectedCities.splice(srcIdx, 1);
+            selectedCities.splice(tgtIdx, 0, moved);
+            saveCities();
+            renderFull();
+        });
+    });
+}
+
+// ── ORD button ────────────────────────────────────────────────────────────────
+if (isDesktop) {
+    document.getElementById('ordBtn').style.display = '';
+    document.getElementById('ordBtn').addEventListener('click', sortByTimezone);
+}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 applyTheme(localStorage.getItem(THEME_KEY) || 'dark', false);
