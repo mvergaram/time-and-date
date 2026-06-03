@@ -1,0 +1,113 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//mytimeanddate//DST Transitions 2026//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:World Time Summer Time Updates 2026
+X-WR-TIMEZONE:UTC
+
+BEGIN:VEVENT
+UID:dst-2026-northamerica-spring@mytimeanddate
+DTSTART;VALUE=DATE:20260308
+DTEND;VALUE=DATE:20260309
+SUMMARY:North America clocks spring forward
+DESCRIPTION:SPRING FORWARD (+1 hour)\n\nCities: Anchorage\, Juneau\, Vancouver\, Victoria\, Seattle\, Portland\, San Francisco\, Los Angeles\, San Diego\, Las Vegas\, Denver\, Salt Lake City\, Boise\, Chicago\, Dallas\, Houston\, Minneapolis\, Indianapolis\, Detroit\, New York\, Miami\, Atlanta\, Philadelphia\, Boston\, Washington DC\, Halifax\, St. John's\, Tijuana\, Havana\, Nassau\, Port-au-Prince\n\nTimezone changes:\n• America/Anchorage: UTC−9 → UTC−8\n• America/Juneau: UTC−9 → UTC−8\n• America/Vancouver (Vancouver\, Victoria): UTC−8 → UTC−7\n• America/Los_Angeles (Seattle\, Portland\, SF\, LA\, San Diego\, Las Vegas): UTC−8 → UTC−7\n• America/Denver (Denver\, Salt Lake City): UTC−7 → UTC−6\n• America/Boise (Boise): UTC−7 → UTC−6\n• America/Chicago (Chicago\, Dallas\, Houston\, Minneapolis): UTC−6 → UTC−5\n• America/Indiana/Indianapolis: UTC−5 → UTC−4\n• America/Detroit: UTC−5 → UTC−4\n• America/New_York (New York\, Miami\, Atlanta\, Philadelphia\, Boston\, Washington DC): UTC−5 → UTC−4\n• America/Halifax: UTC−4 → UTC−3\n• America/St_Johns: UTC−3:30 → UTC−2:30\n• America/Tijuana: UTC−8 → UTC−7\n• America/Havana: UTC−5 → UTC−4\n• America/Nassau: UTC−5 → UTC−4\n• America/Port-au-Prince: UTC−5 → UTC−4
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-northamerica-fall@mytimeanddate
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:North America clocks fall back
+DESCRIPTION:FALL BACK (−1 hour)\n\nCities: Anchorage\, Juneau\, Vancouver\, Victoria\, Seattle\, Portland\, San Francisco\, Los Angeles\, San Diego\, Las Vegas\, Denver\, Salt Lake City\, Boise\, Chicago\, Dallas\, Houston\, Minneapolis\, Indianapolis\, Detroit\, New York\, Miami\, Atlanta\, Philadelphia\, Boston\, Washington DC\, Halifax\, St. John's\, Tijuana\, Havana\, Nassau\, Port-au-Prince\n\nTimezone changes:\n• America/Anchorage: UTC−8 → UTC−9\n• America/Juneau: UTC−8 → UTC−9\n• America/Vancouver (Vancouver\, Victoria): UTC−7 → UTC−8\n• America/Los_Angeles (Seattle\, Portland\, SF\, LA\, San Diego\, Las Vegas): UTC−7 → UTC−8\n• America/Denver (Denver\, Salt Lake City): UTC−6 → UTC−7\n• America/Boise (Boise): UTC−6 → UTC−7\n• America/Chicago (Chicago\, Dallas\, Houston\, Minneapolis): UTC−5 → UTC−6\n• America/Indiana/Indianapolis: UTC−4 → UTC−5\n• America/Detroit: UTC−4 → UTC−5\n• America/New_York (New York\, Miami\, Atlanta\, Philadelphia\, Boston\, Washington DC): UTC−4 → UTC−5\n• America/Halifax: UTC−3 → UTC−4\n• America/St_Johns: UTC−2:30 → UTC−3:30\n• America/Tijuana: UTC−7 → UTC−8\n• America/Havana: UTC−4 → UTC−5\n• America/Nassau: UTC−4 → UTC−5\n• America/Port-au-Prince: UTC−4 → UTC−5
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-morocco-ramadan@mytimeanddate
+DTSTART;VALUE=DATE:20260215
+DTEND;VALUE=DATE:20260216
+SUMMARY:Morocco reverts for Ramadan
+DESCRIPTION:FALL BACK (−1 hour) — Ramadan reversion\n\nCities: Casablanca\, Rabat\nCountry: Morocco\n\nTimezone change:\n• Africa/Casablanca: UTC+1 → UTC+0\n\nNote: Morocco temporarily reverts to UTC+0 during Ramadan each year\, then resumes UTC+1 after Ramadan ends.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-morocco-post-ramadan@mytimeanddate
+DTSTART;VALUE=DATE:20260322
+DTEND;VALUE=DATE:20260323
+SUMMARY:Morocco resumes summer time after Ramadan
+DESCRIPTION:SPRING FORWARD (+1 hour) — Post-Ramadan resumption\n\nCities: Casablanca\, Rabat\nCountry: Morocco\n\nTimezone change:\n• Africa/Casablanca: UTC+0 → UTC+1\n\nNote: Morocco resumes UTC+1 after Ramadan ends. This is the standard pattern — Morocco is at UTC+1 for most of the year.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-israel-spring@mytimeanddate
+DTSTART;VALUE=DATE:20260327
+DTEND;VALUE=DATE:20260328
+SUMMARY:Israel clocks spring forward
+DESCRIPTION:SPRING FORWARD (+1 hour)\n\nCities: Tel Aviv\, Jerusalem\nCountry: Israel\n\nTimezone change:\n• Asia/Jerusalem: UTC+2 → UTC+3\n\nNote: Israel uses its own DST schedule\, independent of the EU. Clocks advance at 02:00 local time on the last Friday of March.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-europe-spring@mytimeanddate
+DTSTART;VALUE=DATE:20260329
+DTEND;VALUE=DATE:20260330
+SUMMARY:Europe & Atlantic islands clocks spring forward
+DESCRIPTION:SPRING FORWARD (+1 hour)\n\nCities: Azores\, Las Palmas\, Lisbon\, London\, Dublin\, Paris\, Madrid\, Barcelona\, Amsterdam\, Brussels\, Zurich\, Geneva\, Berlin\, Hamburg\, Rome\, Milan\, Vienna\, Prague\, Warsaw\, Krakow\, Budapest\, Ljubljana\, Zagreb\, Sarajevo\, Skopje\, Belgrade\, Tirana\, Stockholm\, Oslo\, Copenhagen\, Athens\, Sofia\, Bucharest\, Vilnius\, Riga\, Tallinn\, Helsinki\, Chisinau\, Kyiv\, Nicosia\, Beirut\n\nTimezone changes:\n• Atlantic/Azores: UTC−1 → UTC+0\n• Atlantic/Canary (Las Palmas): UTC+0 → UTC+1\n• Europe/Lisbon: UTC+0 → UTC+1\n• Europe/London: UTC+0 → UTC+1\n• Europe/Dublin: UTC+0 → UTC+1\n• Europe/Paris: UTC+1 → UTC+2\n• Europe/Madrid (Madrid\, Barcelona): UTC+1 → UTC+2\n• Europe/Amsterdam: UTC+1 → UTC+2\n• Europe/Brussels: UTC+1 → UTC+2\n• Europe/Zurich (Zurich\, Geneva): UTC+1 → UTC+2\n• Europe/Berlin (Berlin\, Hamburg): UTC+1 → UTC+2\n• Europe/Rome (Rome\, Milan): UTC+1 → UTC+2\n• Europe/Vienna: UTC+1 → UTC+2\n• Europe/Prague: UTC+1 → UTC+2\n• Europe/Warsaw (Warsaw\, Krakow): UTC+1 → UTC+2\n• Europe/Budapest: UTC+1 → UTC+2\n• Europe/Ljubljana: UTC+1 → UTC+2\n• Europe/Zagreb: UTC+1 → UTC+2\n• Europe/Sarajevo: UTC+1 → UTC+2\n• Europe/Skopje: UTC+1 → UTC+2\n• Europe/Belgrade: UTC+1 → UTC+2\n• Europe/Tirane (Tirana): UTC+1 → UTC+2\n• Europe/Stockholm: UTC+1 → UTC+2\n• Europe/Oslo: UTC+1 → UTC+2\n• Europe/Copenhagen: UTC+1 → UTC+2\n• Europe/Athens: UTC+2 → UTC+3\n• Europe/Sofia: UTC+2 → UTC+3\n• Europe/Bucharest: UTC+2 → UTC+3\n• Europe/Vilnius: UTC+2 → UTC+3\n• Europe/Riga: UTC+2 → UTC+3\n• Europe/Tallinn: UTC+2 → UTC+3\n• Europe/Helsinki: UTC+2 → UTC+3\n• Europe/Chisinau: UTC+2 → UTC+3\n• Europe/Kiev (Kyiv): UTC+2 → UTC+3\n• Asia/Nicosia: UTC+2 → UTC+3\n• Asia/Beirut: UTC+2 → UTC+3
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-egypt-spring@mytimeanddate
+DTSTART;VALUE=DATE:20260424
+DTEND;VALUE=DATE:20260425
+SUMMARY:Egypt clocks spring forward
+DESCRIPTION:SPRING FORWARD (+1 hour)\n\nCities: Cairo\nCountry: Egypt\n\nTimezone change:\n• Africa/Cairo: UTC+2 → UTC+3\n\nNote: Egypt resumed DST observance in 2024 after suspending it from 2011 to 2023.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-chile-fall@mytimeanddate
+DTSTART;VALUE=DATE:20260404
+DTEND;VALUE=DATE:20260405
+SUMMARY:Chile & Easter Island leave summer time
+DESCRIPTION:FALL BACK (−1 hour) — Southern Hemisphere end of summer\n\nCities: Santiago\, Valparaíso\, Talca\, Temuco\, Antofagasta\, La Serena\, Concepción\, Puerto Montt\, Isla de Pascua\nCountry: Chile\n\nTimezone changes:\n• America/Santiago (Santiago\, Valparaíso\, Talca\, Temuco\, Antofagasta\, La Serena\, Concepción\, Puerto Montt): UTC−3 → UTC−4\n• Pacific/Easter (Isla de Pascua): UTC−5 → UTC−6\n\nNote: Southern Hemisphere — summer runs October through April. Clocks go back at 23:00 local on April 4.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-newzealand-fall@mytimeanddate
+DTSTART;VALUE=DATE:20260405
+DTEND;VALUE=DATE:20260406
+SUMMARY:New Zealand leaves summer time
+DESCRIPTION:FALL BACK (−1 hour) — Southern Hemisphere end of summer\n\nCities: Auckland\, Wellington\nCountry: New Zealand\n\nTimezone change:\n• Pacific/Auckland (Auckland\, Wellington): UTC+13 → UTC+12\n\nNote: Southern Hemisphere — summer runs September through April. Clocks go back at 03:00 local on the first Sunday of April.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-chile-spring@mytimeanddate
+DTSTART;VALUE=DATE:20260906
+DTEND;VALUE=DATE:20260907
+SUMMARY:Chile & Easter Island enter summer time
+DESCRIPTION:SPRING FORWARD (+1 hour) — Southern Hemisphere start of summer\n\nCities: Santiago\, Valparaíso\, Talca\, Temuco\, Antofagasta\, La Serena\, Concepción\, Puerto Montt\, Isla de Pascua\nCountry: Chile\n\nTimezone changes:\n• America/Santiago (Santiago\, Valparaíso\, Talca\, Temuco\, Antofagasta\, La Serena\, Concepción\, Puerto Montt): UTC−4 → UTC−3\n• Pacific/Easter (Isla de Pascua): UTC−6 → UTC−5\n\nNote: Southern Hemisphere — summer runs October through April. Clocks spring forward at 01:00 local on the first Sunday of September.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-newzealand-spring@mytimeanddate
+DTSTART;VALUE=DATE:20260927
+DTEND;VALUE=DATE:20260928
+SUMMARY:New Zealand enters summer time
+DESCRIPTION:SPRING FORWARD (+1 hour) — Southern Hemisphere start of summer\n\nCities: Auckland\, Wellington\nCountry: New Zealand\n\nTimezone change:\n• Pacific/Auckland (Auckland\, Wellington): UTC+12 → UTC+13\n\nNote: Southern Hemisphere — summer runs September through April. Clocks spring forward at 02:00 local on the last Sunday of September.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-europe-fall@mytimeanddate
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:Europe & Atlantic islands clocks fall back
+DESCRIPTION:FALL BACK (−1 hour)\n\nCities: Azores\, Las Palmas\, Lisbon\, London\, Dublin\, Paris\, Madrid\, Barcelona\, Amsterdam\, Brussels\, Zurich\, Geneva\, Berlin\, Hamburg\, Rome\, Milan\, Vienna\, Prague\, Warsaw\, Krakow\, Budapest\, Ljubljana\, Zagreb\, Sarajevo\, Skopje\, Belgrade\, Tirana\, Stockholm\, Oslo\, Copenhagen\, Athens\, Sofia\, Bucharest\, Vilnius\, Riga\, Tallinn\, Helsinki\, Chisinau\, Kyiv\, Nicosia\, Beirut\, Tel Aviv\, Jerusalem\n\nTimezone changes:\n• Atlantic/Azores: UTC+0 → UTC−1\n• Atlantic/Canary (Las Palmas): UTC+1 → UTC+0\n• Europe/Lisbon: UTC+1 → UTC+0\n• Europe/London: UTC+1 → UTC+0\n• Europe/Dublin: UTC+1 → UTC+0\n• Europe/Paris: UTC+2 → UTC+1\n• Europe/Madrid (Madrid\, Barcelona): UTC+2 → UTC+1\n• Europe/Amsterdam: UTC+2 → UTC+1\n• Europe/Brussels: UTC+2 → UTC+1\n• Europe/Zurich (Zurich\, Geneva): UTC+2 → UTC+1\n• Europe/Berlin (Berlin\, Hamburg): UTC+2 → UTC+1\n• Europe/Rome (Rome\, Milan): UTC+2 → UTC+1\n• Europe/Vienna: UTC+2 → UTC+1\n• Europe/Prague: UTC+2 → UTC+1\n• Europe/Warsaw (Warsaw\, Krakow): UTC+2 → UTC+1\n• Europe/Budapest: UTC+2 → UTC+1\n• Europe/Ljubljana: UTC+2 → UTC+1\n• Europe/Zagreb: UTC+2 → UTC+1\n• Europe/Sarajevo: UTC+2 → UTC+1\n• Europe/Skopje: UTC+2 → UTC+1\n• Europe/Belgrade: UTC+2 → UTC+1\n• Europe/Tirane (Tirana): UTC+2 → UTC+1\n• Europe/Stockholm: UTC+2 → UTC+1\n• Europe/Oslo: UTC+2 → UTC+1\n• Europe/Copenhagen: UTC+2 → UTC+1\n• Europe/Athens: UTC+3 → UTC+2\n• Europe/Sofia: UTC+3 → UTC+2\n• Europe/Bucharest: UTC+3 → UTC+2\n• Europe/Vilnius: UTC+3 → UTC+2\n• Europe/Riga: UTC+3 → UTC+2\n• Europe/Tallinn: UTC+3 → UTC+2\n• Europe/Helsinki: UTC+3 → UTC+2\n• Europe/Chisinau: UTC+3 → UTC+2\n• Europe/Kiev (Kyiv): UTC+3 → UTC+2\n• Asia/Nicosia: UTC+3 → UTC+2\n• Asia/Beirut: UTC+3 → UTC+2\n• Asia/Jerusalem (Tel Aviv\, Jerusalem): UTC+3 → UTC+2
+END:VEVENT
+
+BEGIN:VEVENT
+UID:dst-2026-egypt-fall@mytimeanddate
+DTSTART;VALUE=DATE:20261029
+DTEND;VALUE=DATE:20261030
+SUMMARY:Egypt clocks fall back
+DESCRIPTION:FALL BACK (−1 hour)\n\nCities: Cairo\nCountry: Egypt\n\nTimezone change:\n• Africa/Cairo: UTC+3 → UTC+2
+END:VEVENT
+
+END:VCALENDAR

@@ -243,6 +243,18 @@
         .city-date   { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; text-transform: capitalize; }
         .city-offset { font-size: 0.72rem; color: var(--text-dim);   margin-top: 0.4rem; }
 
+        .dst-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.15rem;
+            font-size: 0.68rem;
+            color: var(--accent);
+            margin-left: 0.35rem;
+            opacity: 0.9;
+            vertical-align: middle;
+            font-style: normal;
+        }
+
         /* ── Empty state ── */
         .empty {
             text-align: center;
@@ -377,6 +389,41 @@ document.getElementById('themeBtn').addEventListener('click', () => {
     const cur = document.documentElement.getAttribute('data-theme');
     applyTheme(cur === 'dark' ? 'light' : 'dark');
 });
+
+// ── DST detection ─────────────────────────────────────────────────────────────
+// Returns true when the timezone is currently observing DST.
+// Compares Jan and Jun standard offsets — if the current offset matches neither,
+// it is DST. Falls back to comparing current vs. the "winter" offset.
+const _dstCache = new Map();
+let   _dstCacheMinute = -1;
+
+function isInDST(tz) {
+    const now = Date.now();
+    const minute = Math.floor(now / 60000);
+    if (minute !== _dstCacheMinute) { _dstCache.clear(); _dstCacheMinute = minute; }
+    if (_dstCache.has(tz)) return _dstCache.get(tz);
+
+    const getOff = (d) => {
+        const s = new Intl.DateTimeFormat('en', {
+            timeZone: tz, timeZoneName: 'shortOffset'
+        }).formatToParts(d).find(p => p.type === 'timeZoneName').value;
+        // parse "GMT+5:30" → minutes
+        const m = s.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+        if (!m) return 0;
+        return (m[1] === '+' ? 1 : -1) * (parseInt(m[2]) * 60 + parseInt(m[3] || 0));
+    };
+
+    const jan = getOff(new Date(Date.UTC(2026, 0, 15)));
+    const jun = getOff(new Date(Date.UTC(2026, 5, 15)));
+    if (jan === jun) { _dstCache.set(tz, false); return false; }
+
+    const cur = getOff(new Date(now));
+    // DST = the offset that is more positive (ahead of UTC) — true for both hemispheres
+    const dstOff = Math.max(jan, jun);
+    const result = cur === dstOff;
+    _dstCache.set(tz, result);
+    return result;
+}
 
 // ── Cities ────────────────────────────────────────────────────────────────────
 const CITIES = [
@@ -772,7 +819,7 @@ function renderFull() {
             </div>
             <div class="city-time" data-tz="${escAttr(city.tz)}">${formatTime(city.tz)}</div>
             <div class="city-date" data-tz-date="${escAttr(city.tz)}">${formatDate(city.tz)}</div>
-            <div class="city-offset">${escHtml(formatOffset(city.tz))}</div>
+            <div class="city-offset" data-tz-offset="${escAttr(city.tz)}">${escHtml(formatOffset(city.tz))}${isInDST(city.tz) ? '<em class="dst-badge">☀ DST</em>' : ''}</div>
         </div>`;
     }).join('');
 }
@@ -790,6 +837,10 @@ function tickUpdate() {
     });
     document.querySelectorAll('[data-tz-date]').forEach(el => {
         el.textContent = formatDate(el.dataset.tzDate);
+    });
+    document.querySelectorAll('[data-tz-offset]').forEach(el => {
+        const tz = el.dataset.tzOffset;
+        el.innerHTML = escHtml(formatOffset(tz)) + (isInDST(tz) ? '<em class="dst-badge">☀ DST</em>' : '');
     });
 }
 
