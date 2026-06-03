@@ -321,6 +321,7 @@
 const TRANSLATIONS = {
     es: {
         title:        'Hora <span>Mundial</span>',
+        pageTitle:    'Hora Mundial',
         placeholder:  'Buscar ciudad o país…',
         empty:        'Busca una ciudad para comenzar',
         noResults:    'Sin resultados',
@@ -331,6 +332,7 @@ const TRANSLATIONS = {
     },
     en: {
         title:        'World <span>Time</span>',
+        pageTitle:    'World Time',
         placeholder:  'Search city or country…',
         empty:        'Search a city to get started',
         noResults:    'No results',
@@ -355,7 +357,7 @@ function t(key) { return TRANSLATIONS[currentLang][key]; }
 function detectLang() {
     const saved = localStorage.getItem(LANG_KEY);
     if (saved && TRANSLATIONS[saved]) return saved;
-    const browser = (navigator.language || navigator.userLanguage || 'es').toLowerCase();
+    const browser = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
     return browser.startsWith('es') ? 'es' : 'en';
 }
 
@@ -365,6 +367,7 @@ function applyLang(lang, save = true) {
     if (save) localStorage.setItem(LANG_KEY, lang);
 
     document.getElementById('appTitle').innerHTML   = t('title');
+    document.title = t('pageTitle');
     document.getElementById('searchInput').placeholder = t('placeholder');
     document.getElementById('langBtn').textContent  = lang === 'es' ? 'EN' : 'ES';
     document.getElementById('themeBtn').title        = t('changeTheme');
