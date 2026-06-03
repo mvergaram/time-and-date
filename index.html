@@ -10,6 +10,7 @@
         [data-theme="dark"] {
             --bg:             #075056;
             --bg-card:        #054044;
+            --bg-card-home:   #0a6870;
             --bg-input:       #054044;
             --border:         #0a6870;
             --border-focus:   #7dd4d8;
@@ -29,6 +30,7 @@
         [data-theme="light"] {
             --bg:             linear-gradient(160deg, #9ec8e0 0%, #cce6f2 40%, #eef7ff 100%);
             --bg-card:        rgba(255,255,255,0.68);
+            --bg-card-home:   rgba(7,80,86,0.10);
             --bg-input:       rgba(255,255,255,0.80);
             --border:         rgba(7,80,86,0.15);
             --border-focus:   #075056;
@@ -214,6 +216,10 @@
         .city-name    { font-size: 1rem; font-weight: 600; line-height: 1.2; color: var(--text); }
         .city-country { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
 
+        .card.home {
+            background: var(--bg-card-home);
+        }
+
         .remove-btn {
             background: none;
             border: none;
@@ -230,6 +236,25 @@
         }
 
         .remove-btn:hover { color: #ef4444; background: rgba(239,68,68,0.12); }
+
+        .home-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            line-height: 1;
+            padding: 0.2rem;
+            border-radius: 6px;
+            transition: color 0.15s, background 0.15s;
+            flex-shrink: 0;
+            margin-left: 0.25rem;
+            margin-top: -0.1rem;
+            color: var(--text-dim);
+            opacity: 0.5;
+        }
+
+        .home-btn:hover          { opacity: 1; }
+        .home-btn.active         { color: var(--accent); opacity: 1; }
 
         .city-time {
             font-size: 2.4rem;
@@ -326,6 +351,8 @@ const TRANSLATIONS = {
         empty:        'Busca una ciudad para comenzar',
         noResults:    'Sin resultados',
         remove:       'Eliminar',
+        setHome:      'Marcar como ciudad de inicio',
+        unsetHome:    'Quitar ciudad de inicio',
         changeTheme:  'Cambiar tema',
         footer:       'Creado por Miguel gracias a <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>',
         dateLocale:   'es',
@@ -337,6 +364,8 @@ const TRANSLATIONS = {
         empty:        'Search a city to get started',
         noResults:    'No results',
         remove:       'Remove',
+        setHome:      'Set as home city',
+        unsetHome:    'Unset home city',
         changeTheme:  'Change theme',
         footer:       'Created by Miguel thanks to <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>',
         dateLocale:   'en',
@@ -346,10 +375,12 @@ const TRANSLATIONS = {
 const STORAGE_KEY = 'worldtime_v1';
 const THEME_KEY   = 'worldtime_theme';
 const LANG_KEY    = 'worldtime_lang';
+const HOME_KEY    = 'worldtime_home';
 
 let selectedCities = [];
 let lastSortKeys   = '';
 let currentLang    = 'es';
+let homeCity       = null;  // cityKey string of the home city, or null
 
 function t(key) { return TRANSLATIONS[currentLang][key]; }
 
@@ -737,6 +768,17 @@ function saveCities() {
 
 function cityKey(c) { return c.name + '||' + c.tz; }
 
+function loadHome() {
+    homeCity = localStorage.getItem(HOME_KEY) || null;
+}
+
+function toggleHome(key) {
+    homeCity = (homeCity === key) ? null : key;
+    if (homeCity) localStorage.setItem(HOME_KEY, homeCity);
+    else localStorage.removeItem(HOME_KEY);
+    renderFull();
+}
+
 function addCity(city) {
     if (selectedCities.some(c => cityKey(c) === cityKey(city))) return;
     selectedCities.push(city);
@@ -746,6 +788,7 @@ function addCity(city) {
 
 function removeCity(key) {
     selectedCities = selectedCities.filter(c => cityKey(c) !== key);
+    if (homeCity === key) { homeCity = null; localStorage.removeItem(HOME_KEY); }
     saveCities();
     renderFull();
 }
@@ -810,15 +853,17 @@ function renderFull() {
     lastSortKeys = sorted.map(cityKey).join('|');
 
     grid.innerHTML = sorted.map(city => {
-        const key = cityKey(city);
+        const key    = cityKey(city);
+        const isHome = homeCity === key;
         return `
-        <div class="card" data-key="${escHtml(key)}">
+        <div class="card${isHome ? ' home' : ''}" data-key="${escHtml(key)}">
             <div class="card-header">
                 <div class="card-title">
                     <div class="city-name">${escHtml(cityName(city))}</div>
                     <div class="city-country">${escHtml(cityCountry(city))}</div>
                 </div>
-                <button class="remove-btn" onclick="removeCity('${escAttr(key)}')" title="${escAttr(t('remove'))}">&#x2715;</button>
+                <button class="home-btn${isHome ? ' active' : ''}" onclick="toggleHome('${escAttr(key)}')" title="${escAttr(isHome ? t('unsetHome') : t('setHome'))}">&#x2302;</button>
+                ${isHome ? '' : '<button class="remove-btn" onclick="removeCity(\'' + escAttr(key) + '\')" title="' + escAttr(t('remove')) + '">&#x2715;</button>'}
             </div>
             <div class="city-time" data-tz="${escAttr(city.tz)}">${formatTime(city.tz)}</div>
             <div class="city-date" data-tz-date="${escAttr(city.tz)}">${formatDate(city.tz)}</div>
@@ -914,6 +959,7 @@ searchInput.addEventListener('keydown', e => {
 // ── Init ──────────────────────────────────────────────────────────────────────
 applyTheme(localStorage.getItem(THEME_KEY) || 'dark', false);
 loadCities();
+loadHome();
 applyLang(detectLang(), false);   // renders grid + sets all UI strings
 setInterval(tickUpdate, 1000);
 </script>
