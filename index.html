@@ -213,7 +213,7 @@
 
         .card-title { flex: 1; }
 
-        .city-name    { font-size: 1rem; font-weight: 600; line-height: 1.2; color: var(--text); }
+        .city-name    { font-size: 1rem; font-weight: 600; line-height: 1.2; color: var(--text); overflow-wrap: anywhere; }
         .city-country { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
 
         .card.home {
@@ -354,7 +354,7 @@ const TRANSLATIONS = {
     es: {
         title:        'Hora <span>Mundial</span>',
         pageTitle:    'Hora Mundial',
-        placeholder:  'Buscar ciudad o país…',
+        placeholder:  'Buscar ciudad, estado o país…',
         empty:        'Busca una ciudad para comenzar',
         noResults:    'Sin resultados',
         remove:       'Eliminar',
@@ -368,7 +368,7 @@ const TRANSLATIONS = {
     en: {
         title:        'World <span>Time</span>',
         pageTitle:    'World Time',
-        placeholder:  'Search city or country…',
+        placeholder:  'Search city, state or country…',
         empty:        'Search a city to get started',
         noResults:    'No results',
         remove:       'Remove',
@@ -471,22 +471,33 @@ function isInDST(tz) {
 // ── Cities ────────────────────────────────────────────────────────────────────
 const CITIES = [
     // ── América del Norte ──
-    { name:"Honolulu",              country:"Estados Unidos",    countryEn:"United States",   tz:"Pacific/Honolulu",                      lat: 21.31 },
-    { name:"Anchorage",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Anchorage",                     lat: 61.22 },
-    { name:"Juneau",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Juneau",                        lat: 58.30 },
+    { name:"Honolulu",              country:"Estados Unidos",    countryEn:"United States",   tz:"Pacific/Honolulu",                      lat: 21.31, state:"Hawái", stateEn:"Hawaii", stateCode:"HI" },
+    { name:"Anchorage",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Anchorage",                     lat: 61.22, state:"Alaska", stateCode:"AK" },
+    { name:"Juneau",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Juneau",                        lat: 58.30, state:"Alaska", stateCode:"AK" },
     { name:"Vancouver",             country:"Canadá",            countryEn:"Canada",          tz:"America/Vancouver",                     lat: 49.25 },
     { name:"Victoria",              country:"Canadá",            countryEn:"Canada",          tz:"America/Vancouver",                     lat: 48.43 },
-    { name:"Seattle",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 47.61 },
-    { name:"Portland",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 45.52 },
-    { name:"San Francisco",         country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 37.77 },
-    { name:"Los Ángeles",           nameEn:"Los Angeles",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 34.05 },
-    { name:"San Diego",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 32.72 },
-    { name:"Las Vegas",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 36.17 },
-    { name:"Phoenix",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Phoenix",                       lat: 33.45 },
-    { name:"Tucson",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Phoenix",                       lat: 32.22 },
-    { name:"Denver",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 39.74 },
-    { name:"Salt Lake City",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 40.76 },
-    { name:"Albuquerque",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 35.08 },
+    { name:"Seattle",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 47.61, state:"Washington", stateCode:"WA" },
+    { name:"Portland",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 45.52, state:"Oregón", stateEn:"Oregon", stateCode:"OR" },
+    { name:"San Francisco",         country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 37.77, state:"California", stateCode:"CA" },
+    { name:"Los Ángeles",           nameEn:"Los Angeles",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 34.05, state:"California", stateCode:"CA" },
+    { name:"San Diego",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 32.72, state:"California", stateCode:"CA" },
+    { name:"Las Vegas",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 36.17, state:"Nevada", stateCode:"NV" },
+    { name:"Phoenix",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Phoenix",                       lat: 33.45, state:"Arizona", stateCode:"AZ" },
+    { name:"Tucson",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Phoenix",                       lat: 32.22, state:"Arizona", stateCode:"AZ" },
+    { name:"Denver",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 39.74, state:"Colorado", stateCode:"CO" },
+    { name:"Salt Lake City",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 40.76, state:"Utah", stateCode:"UT" },
+    { name:"Albuquerque",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 35.08, state:"Nuevo México", stateEn:"New Mexico", stateCode:"NM" },
+    { name:"Beaverton",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 45.49, state:"Oregón", stateEn:"Oregon", stateCode:"OR" },
+    { name:"Olympia",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 47.04, state:"Washington", stateCode:"WA" },
+    { name:"Salem",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 44.94, state:"Oregón", stateEn:"Oregon", stateCode:"OR" },
+    { name:"Sacramento",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 38.58, state:"California", stateCode:"CA" },
+    { name:"Carson City",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 39.16, state:"Nevada", stateCode:"NV" },
+    { name:"Covina",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Los_Angeles",                   lat: 34.09, state:"California", stateCode:"CA" },
+    { name:"Boise",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/Boise",                         lat: 43.61, state:"Idaho", stateCode:"ID" },
+    { name:"Helena",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 46.60, state:"Montana", stateCode:"MT" },
+    { name:"Fort Collins",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 40.59, state:"Colorado", stateCode:"CO" },
+    { name:"Cheyenne",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 41.14, state:"Wyoming", stateCode:"WY" },
+    { name:"Santa Fe",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Denver",                        lat: 35.69, state:"Nuevo México", stateEn:"New Mexico", stateCode:"NM" },
     { name:"Calgary",               country:"Canadá",            countryEn:"Canada",          tz:"America/Edmonton",                      lat: 51.05 },
     { name:"Edmonton",              country:"Canadá",            countryEn:"Canada",          tz:"America/Edmonton",                      lat: 53.55 },
     { name:"Tijuana",               country:"México",            countryEn:"Mexico",          tz:"America/Tijuana",                       lat: 32.53 },
@@ -509,15 +520,30 @@ const CITIES = [
     { name:"Mérida",                nameEn:"Merida",             country:"México",            countryEn:"Mexico",          tz:"America/Merida",                        lat: 20.97 },
     { name:"Cancún",                nameEn:"Cancun",             country:"México",            countryEn:"Mexico",          tz:"America/Cancun",                        lat: 21.16 },
     { name:"Chetumal",              country:"México",            countryEn:"Mexico",          tz:"America/Cancun",                        lat: 18.50 },
-    { name:"Chicago",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 41.85 },
-    { name:"Dallas",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 32.78 },
-    { name:"Houston",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.76 },
-    { name:"San Antonio",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.42 },
-    { name:"Austin",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 30.27 },
-    { name:"Minneapolis",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 44.98 },
-    { name:"Kansas City",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 39.10 },
-    { name:"St. Louis",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 38.63 },
-    { name:"New Orleans",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.95 },
+    { name:"Chicago",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 41.85, state:"Illinois", stateCode:"IL" },
+    { name:"Dallas",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 32.78, state:"Texas", stateCode:"TX" },
+    { name:"Houston",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.76, state:"Texas", stateCode:"TX" },
+    { name:"San Antonio",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.42, state:"Texas", stateCode:"TX" },
+    { name:"Austin",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 30.27, state:"Texas", stateCode:"TX" },
+    { name:"Minneapolis",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 44.98, state:"Minnesota", stateCode:"MN" },
+    { name:"Kansas City",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 39.10, state:"Misuri", stateEn:"Missouri", stateCode:"MO" },
+    { name:"St. Louis",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 38.63, state:"Misuri", stateEn:"Missouri", stateCode:"MO" },
+    { name:"New Orleans",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 29.95, state:"Luisiana", stateEn:"Louisiana", stateCode:"LA" },
+    { name:"Nashville",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 36.17, state:"Tennessee", stateCode:"TN" },
+    { name:"Bismarck",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 46.80, state:"Dakota del Norte", stateEn:"North Dakota", stateCode:"ND" },
+    { name:"Saint Paul",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 44.95, state:"Minnesota", stateCode:"MN" },
+    { name:"Madison",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 43.07, state:"Wisconsin", stateCode:"WI" },
+    { name:"Des Moines",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 41.59, state:"Iowa", stateCode:"IA" },
+    { name:"Lincoln",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 40.81, state:"Nebraska", stateCode:"NE" },
+    { name:"Jefferson City",        country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 38.57, state:"Misuri", stateEn:"Missouri", stateCode:"MO" },
+    { name:"Topeka",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 39.05, state:"Kansas", stateCode:"KS" },
+    { name:"Springfield",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 39.80, state:"Illinois", stateCode:"IL" },
+    { name:"Oklahoma City",         country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 35.47, state:"Oklahoma", stateCode:"OK" },
+    { name:"Little Rock",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 34.75, state:"Arkansas", stateCode:"AR" },
+    { name:"Jackson",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 32.30, state:"Misisipi", stateEn:"Mississippi", stateCode:"MS" },
+    { name:"Montgomery",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 32.36, state:"Alabama", stateCode:"AL" },
+    { name:"Baton Rouge",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 30.45, state:"Luisiana", stateEn:"Louisiana", stateCode:"LA" },
+    { name:"Pierre",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/Chicago",                       lat: 44.37, state:"Dakota del Sur", stateEn:"South Dakota", stateCode:"SD" },
     { name:"Winnipeg",              country:"Canadá",            countryEn:"Canada",          tz:"America/Winnipeg",                      lat: 49.90 },
     { name:"Regina",                country:"Canadá",            countryEn:"Canada",          tz:"America/Regina",                        lat: 50.45 },
     // ── América Central y Caribe ──
@@ -532,7 +558,8 @@ const CITIES = [
     { name:"Nassau",                country:"Bahamas",           countryEn:"Bahamas",         tz:"America/Nassau",                        lat: 25.05 },
     { name:"Puerto Príncipe",       nameEn:"Port-au-Prince",     country:"Haití",             countryEn:"Haiti",           tz:"America/Port-au-Prince",                lat: 18.54 },
     { name:"Santo Domingo",         country:"Rep. Dominicana",   countryEn:"Dominican Rep.",  tz:"America/Santo_Domingo",                 lat: 18.47 },
-    { name:"San Juan",              country:"Puerto Rico",       countryEn:"Puerto Rico",     tz:"America/Puerto_Rico",                   lat: 18.47 },
+    { name:"San Juan",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/Puerto_Rico",                   lat: 18.47, state:"Puerto Rico", stateCode:"PR" },
+    { name:"Charlotte Amalie",      country:"Estados Unidos",    countryEn:"United States",   tz:"America/St_Thomas",                     lat: 18.34, state:"Islas Vírgenes de EE.UU.", stateEn:"U.S. Virgin Islands", stateCode:"VI" },
     { name:"Bridgetown",            country:"Barbados",          countryEn:"Barbados",        tz:"America/Barbados",                      lat: 13.10 },
     { name:"Puerto España",         nameEn:"Port of Spain",      country:"Trinidad y Tobago", countryEn:"Trinidad & Tobago",tz:"America/Port_of_Spain",                lat: 10.65 },
     // ── América del Sur ──
@@ -562,6 +589,7 @@ const CITIES = [
     { name:"Río de Janeiro",        nameEn:"Rio de Janeiro",     country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-22.90 },
     { name:"São Paulo",             nameEn:"Sao Paulo",          country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-23.55 },
     { name:"Porto Alegre",          country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-30.03 },
+    { name:"Curitiba",              country:"Brasil",            countryEn:"Brazil",          tz:"America/Sao_Paulo",                     lat:-25.43 },
     { name:"Santiago",              country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-33.45 },
     { name:"Valparaíso",            nameEn:"Valparaiso",         country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-33.05 },
     { name:"Talca",                 country:"Chile",             countryEn:"Chile",           tz:"America/Santiago",                      lat:-35.43 },
@@ -580,18 +608,48 @@ const CITIES = [
     { name:"Bariloche",             country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Salta",               lat:-41.13 },
     { name:"Ushuaia",               country:"Argentina",         countryEn:"Argentina",       tz:"America/Argentina/Ushuaia",             lat:-54.80 },
     // ── Este de EE. UU. / Canadá ──
-    { name:"Atlanta",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 33.75 },
-    { name:"Miami",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 25.77 },
-    { name:"Orlando",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 28.54 },
-    { name:"Tampa",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 27.95 },
-    { name:"Charlotte",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 35.23 },
-    { name:"Washington D.C.",       country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 38.91 },
-    { name:"Philadelphia",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.95 },
-    { name:"Nueva York",            nameEn:"New York",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 40.71 },
-    { name:"Boston",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 42.36 },
-    { name:"Detroit",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Detroit",                       lat: 42.33 },
-    { name:"Columbus",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.96 },
-    { name:"Indianapolis",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/Indiana/Indianapolis",          lat: 39.77 },
+    { name:"Atlanta",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 33.75, state:"Georgia", stateCode:"GA" },
+    { name:"Miami",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 25.77, state:"Florida", stateCode:"FL" },
+    { name:"Orlando",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 28.54, state:"Florida", stateCode:"FL" },
+    { name:"Tampa",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 27.95, state:"Florida", stateCode:"FL" },
+    { name:"Charlotte",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 35.23, state:"Carolina del Norte", stateEn:"North Carolina", stateCode:"NC" },
+    { name:"Washington D.C.",       country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 38.91, state:"Distrito de Columbia", stateEn:"District of Columbia", stateCode:"DC", hideState:true },
+    { name:"Philadelphia",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.95, state:"Pensilvania", stateEn:"Pennsylvania", stateCode:"PA" },
+    { name:"Nueva York",            nameEn:"New York",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 40.71, state:"Nueva York", stateEn:"New York", stateCode:"NY" },
+    { name:"Boston",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 42.36, state:"Massachusetts", stateCode:"MA" },
+    { name:"Detroit",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Detroit",                       lat: 42.33, state:"Míchigan", stateEn:"Michigan", stateCode:"MI" },
+    { name:"Columbus",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.96, state:"Ohio", stateCode:"OH" },
+    { name:"Indianapolis",          country:"Estados Unidos",    countryEn:"United States",   tz:"America/Indiana/Indianapolis",          lat: 39.77, state:"Indiana", stateCode:"IN" },
+    { name:"Augusta",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 44.32, state:"Maine", stateCode:"ME" },
+    { name:"Montpelier",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 44.26, state:"Vermont", stateCode:"VT" },
+    { name:"Concord",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 43.21, state:"Nuevo Hampshire", stateEn:"New Hampshire", stateCode:"NH" },
+    { name:"Albany",                country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 42.65, state:"Nueva York", stateEn:"New York", stateCode:"NY" },
+    { name:"Lansing",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/Detroit",                       lat: 42.73, state:"Míchigan", stateEn:"Michigan", stateCode:"MI" },
+    { name:"West Bloomfield",       country:"Estados Unidos",    countryEn:"United States",   tz:"America/Detroit",                       lat: 42.55, state:"Míchigan", stateEn:"Michigan", stateCode:"MI" },
+    { name:"Providence",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 41.82, state:"Rhode Island", stateCode:"RI" },
+    { name:"Hartford",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 41.76, state:"Connecticut", stateCode:"CT" },
+    { name:"Trenton",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 40.22, state:"Nueva Jersey", stateEn:"New Jersey", stateCode:"NJ" },
+    { name:"Harrisburg",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 40.27, state:"Pensilvania", stateEn:"Pennsylvania", stateCode:"PA" },
+    { name:"Annapolis",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 38.97, state:"Maryland", stateCode:"MD" },
+    { name:"Richmond",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 37.55, state:"Virginia", stateCode:"VA" },
+    { name:"Raleigh",               country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 35.77, state:"Carolina del Norte", stateEn:"North Carolina", stateCode:"NC" },
+    { name:"Columbia",              country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 34.00, state:"Carolina del Sur", stateEn:"South Carolina", stateCode:"SC" },
+    { name:"Dover",                 country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 39.16, state:"Delaware", stateCode:"DE" },
+    { name:"Frankfort",             country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 38.20, state:"Kentucky", stateCode:"KY" },
+    { name:"Tallahassee",           country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 30.44, state:"Florida", stateCode:"FL" },
+    { name:"Charleston",            country:"Estados Unidos",    countryEn:"United States",   tz:"America/New_York",                      lat: 38.35, state:"Virginia Occidental", stateEn:"West Virginia", stateCode:"WV" },
+    // ── Zonas horarias EE.UU. (buscables por código) ──
+    { name:"SST",       nameEn:"SST",       country:"Samoa Estándar",          countryEn:"Samoa Standard Time",     tz:"Pacific/Pago_Pago",    lat:-14.28, codes:["SST","Samoa Standard"] },
+    { name:"HST",       nameEn:"HST",       country:"Hawái Estándar",           countryEn:"Hawaii Standard Time",    tz:"Pacific/Honolulu",     lat: 21.31, codes:["HST","Hawaii Standard"] },
+    { name:"HST/HDT",   nameEn:"HST/HDT",   country:"Hawái-Aleutianas",         countryEn:"Hawaii-Aleutian Time",    tz:"America/Adak",         lat: 51.88, codes:["HST","HDT","HAST","HADT","Hawaii-Aleutian"] },
+    { name:"AKST/AKDT", nameEn:"AKST/AKDT", country:"Alaska",                   countryEn:"Alaska Standard Time",    tz:"America/Anchorage",    lat: 61.22, codes:["AKST","AKDT","AKT","Alaska"] },
+    { name:"PST/PDT",   nameEn:"PST/PDT",   country:"Pacífico (EE.UU.)",        countryEn:"Pacific Standard Time",   tz:"America/Los_Angeles",  lat: 34.05, codes:["PST","PDT","PT","Pacific Standard"] },
+    { name:"MST",       nameEn:"MST",       country:"Montaña Estándar (fijo)",   countryEn:"Mountain Standard Time",  tz:"America/Phoenix",      lat: 33.45, codes:["MST","Mountain Standard"] },
+    { name:"MST/MDT",   nameEn:"MST/MDT",   country:"Montaña (EE.UU.)",         countryEn:"Mountain Time",           tz:"America/Denver",       lat: 39.74, codes:["MST","MDT","MT","Mountain Time"] },
+    { name:"CST/CDT",   nameEn:"CST/CDT",   country:"Central (EE.UU.)",         countryEn:"Central Standard Time",   tz:"America/Chicago",      lat: 41.85, codes:["CST","CDT","CT","Central Standard"] },
+    { name:"EST/EDT",   nameEn:"EST/EDT",   country:"Este (EE.UU.)",             countryEn:"Eastern Standard Time",   tz:"America/New_York",     lat: 40.71, codes:["EST","EDT","ET","Eastern Standard"] },
+    { name:"AST",       nameEn:"AST",       country:"Atlántico (EE.UU.)",        countryEn:"Atlantic Standard Time",  tz:"America/Puerto_Rico",  lat: 18.47, codes:["AST","Atlantic Standard"] },
+    { name:"ChST",      nameEn:"ChST",      country:"Chamorro (Guam/CNMI)",      countryEn:"Chamorro Standard Time",  tz:"Pacific/Guam",         lat: 13.47, codes:["ChST","Chamorro Standard"] },
     { name:"Toronto",               country:"Canadá",            countryEn:"Canada",          tz:"America/Toronto",                       lat: 43.65 },
     { name:"Ottawa",                country:"Canadá",            countryEn:"Canada",          tz:"America/Toronto",                       lat: 45.42 },
     { name:"Montreal",              country:"Canadá",            countryEn:"Canada",          tz:"America/Toronto",                       lat: 45.51 },
@@ -599,6 +657,7 @@ const CITIES = [
     { name:"St. John's",            country:"Canadá",            countryEn:"Canada",          tz:"America/St_Johns",                      lat: 47.56 },
     // ── Europa ──
     { name:"Reikiavik",             nameEn:"Reykjavik",          country:"Islandia",          countryEn:"Iceland",         tz:"Atlantic/Reykjavik",                    lat: 64.13 },
+    { name:"UTC / GMT", nameEn:"UTC / GMT", country:"Tiempo Universal",   countryEn:"Universal Time",  tz:"Etc/UTC",              lat: 51.48, codes:["UTC","GMT","UTC+0","GMT+0","Universal Time"] },
     { name:"Londres",               nameEn:"London",             country:"Reino Unido",       countryEn:"United Kingdom",  tz:"Europe/London",                         lat: 51.51 },
     { name:"Dublín",                nameEn:"Dublin",             country:"Irlanda",           countryEn:"Ireland",         tz:"Europe/Dublin",                         lat: 53.33 },
     { name:"Lisboa",                country:"Portugal",          countryEn:"Portugal",        tz:"Europe/Lisbon",                         lat: 38.72 },
@@ -696,6 +755,7 @@ const CITIES = [
     { name:"Delhi",                 country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 28.66 },
     { name:"Mumbai",                country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 19.08 },
     { name:"Kolkata",               country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 22.57 },
+    { name:"Siliguri",              country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 26.72 },
     { name:"Hyderabad",             country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 17.38 },
     { name:"Bangalore",             country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 12.97 },
     { name:"Chennai",               country:"India",             countryEn:"India",           tz:"Asia/Kolkata",                          lat: 13.08 },
@@ -747,6 +807,10 @@ const CITIES = [
     { name:"Apia",                  country:"Samoa",             countryEn:"Samoa",           tz:"Pacific/Apia",                          lat:-13.83 },
     { name:"Papeete",               country:"Polinesia Francesa",countryEn:"French Polynesia",tz:"Pacific/Tahiti",                        lat:-17.53 },
     { name:"Noumea",                country:"Nueva Caledonia",   countryEn:"New Caledonia",   tz:"Pacific/Noumea",                        lat:-22.27 },
+    // ── Territorios de EE.UU. en el Pacífico ──
+    { name:"Hagåtña",               country:"Estados Unidos",    countryEn:"United States",   tz:"Pacific/Guam",                          lat: 13.48, state:"Guam", stateCode:"GU" },
+    { name:"Saipán",                nameEn:"Saipan",             country:"Estados Unidos",    countryEn:"United States",   tz:"Pacific/Saipan",                        lat: 15.18, state:"Islas Marianas del Norte", stateEn:"Northern Mariana Islands", stateCode:"MP" },
+    { name:"Pago Pago",             country:"Estados Unidos",    countryEn:"United States",   tz:"Pacific/Pago_Pago",                     lat:-14.28, state:"Samoa Americana", stateEn:"American Samoa", stateCode:"AS" },
 ];
 
 // Look up the full CITIES entry for a stored city (handles objects saved before new fields were added)
@@ -762,6 +826,18 @@ function cityName(city) {
 function cityCountry(city) {
     const full = lookupCity(city);
     return (currentLang === 'en' && full.countryEn) ? full.countryEn : full.country;
+}
+
+function cityState(city) {
+    const full = lookupCity(city);
+    if (full.hideState) return '';
+    return (currentLang === 'en' && full.stateEn) ? full.stateEn : (full.state || '');
+}
+
+// Título mostrado en tarjeta y dropdown: "Ciudad, Estado". El estado nunca entra en cityKey().
+function cityTitle(city) {
+    const st = cityState(city);
+    return st ? cityName(city) + ', ' + st : cityName(city);
 }
 
 function loadCities() {
@@ -825,6 +901,9 @@ function sortByTimezone() {
         const dt = getSecondOfDay(a.tz) - getSecondOfDay(b.tz);
         if (dt !== 0) return dt;
         const fa = lookupCity(a), fb = lookupCity(b);
+        const aIsCode = !!fa.codes, bIsCode = !!fb.codes;
+        if (aIsCode !== bIsCode) return aIsCode ? -1 : 1;
+        if (aIsCode) return fa.name.localeCompare(fb.name);
         return (fb.lat ?? 0) - (fa.lat ?? 0);
     });
     saveCities();
@@ -877,7 +956,7 @@ function renderFull() {
         <div class="card${isHome ? ' home' : ''}"${drag} data-key="${escHtml(key)}">
             <div class="card-header">
                 <div class="card-title">
-                    <div class="city-name">${escHtml(cityName(city))}</div>
+                    <div class="city-name">${escHtml(cityTitle(city))}</div>
                     <div class="city-country">${escHtml(cityCountry(city))}</div>
                 </div>
                 <button class="home-btn${isHome ? ' active' : ''}" onclick="toggleHome('${escAttr(key)}')" title="${escAttr(isHome ? t('unsetHome') : t('setHome'))}">&#x2302;</button>
@@ -927,12 +1006,20 @@ searchInput.addEventListener('input', () => {
     const q = normalize(searchInput.value.trim());
     if (!q) { closeDropdown(); return; }
 
-    const results = CITIES.filter(c =>
-        normalize(c.name).includes(q) ||
-        normalize(c.nameEn || '').includes(q) ||
-        normalize(c.country).includes(q) ||
-        normalize(c.countryEn || '').includes(q)
-    ).slice(0, 12);
+    const matchScore = c => {
+        if (c.codes && c.codes.some(code => normalize(code).includes(q))) return 0;
+        if (normalize(c.name).includes(q) || normalize(c.nameEn || '').includes(q)) return 1;
+        if (normalize(c.state || '').includes(q) ||
+            normalize(c.stateEn || '').includes(q) ||
+            (c.stateCode && normalize(c.stateCode) === q)) return 2;
+        return 3;
+    };
+    const scored = CITIES.map(c => ({ c, s: matchScore(c) }));
+    const results = scored.filter(x =>
+        x.s < 3 ||
+        normalize(x.c.country).includes(q) ||
+        normalize(x.c.countryEn || '').includes(q)
+    ).sort((a, b) => a.s - b.s).slice(0, 12).map(x => x.c);
 
     if (!results.length) {
         dropdown.innerHTML = `<div class="no-results">${t('noResults')}</div>`;
@@ -942,7 +1029,7 @@ searchInput.addEventListener('input', () => {
 
     dropdown.innerHTML = results.map(c =>
         `<div class="dropdown-item" onclick="pickCity(${CITIES.indexOf(c)})">
-            <span class="di-name">${escHtml(cityName(c))}</span>
+            <span class="di-name">${escHtml(cityTitle(c))}</span>
             <span class="di-country">${escHtml(cityCountry(c))}</span>
             <span class="di-tz">${escHtml(formatOffset(c.tz))}</span>
         </div>`
@@ -968,6 +1055,10 @@ document.addEventListener('click', e => {
 
 searchInput.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeDropdown(); searchInput.blur(); }
+    if (e.key === 'Enter') {
+        const first = dropdown.querySelector('.dropdown-item');
+        if (first) { e.preventDefault(); first.click(); }
+    }
 });
 
 // ── Drag & drop ───────────────────────────────────────────────────────────────
