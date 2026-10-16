@@ -29,7 +29,15 @@ You have 2 options:
 
 ## Privacy
 
-Fully private. No data sent out of your browser. Locations added are hosted in your local browser storage.
+Fully private — this app runs entirely in your browser. No data is ever sent to any server: there's no backend, no analytics, and no tracking of any kind. All information (selected cities, theme, language, and home city) is stored only in your browser's `localStorage` (`worldtime_v1`, `worldtime_theme`, `worldtime_lang`, `worldtime_home`) and never leaves your device.
+
+## Terms of Use
+
+This app is provided "as is", without warranty of any kind, express or implied, including but not limited to the accuracy of displayed times, availability, or fitness for a particular purpose. You use it at your own risk and are fully responsible for your use of this app; the author assumes no liability for any damages or losses arising from it.
+
+## License
+
+Licensed under [GPL-3.0](LICENSE) — you're free to use, copy, modify, and distribute this code for any purpose, provided that any derivative work also remains open source under the same license.
 
 ## Created by
 
