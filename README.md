@@ -4,14 +4,14 @@ Single-page world clock web app. Shows the current time in cities around the wor
 
 ## Features
 
-- Add cities from a searchable autocomplete (200+ cities, Americas-heavy)
-- Each card shows local time, date, country, and UTC offset
-- DST badge next to the offset when the city is currently observing Daylight Saving Time
-- Mark a home city (highlighted card, cannot be removed while set)
-- Manual drag & drop reordering (desktop only)
-- ORD button: sort cards by local time ascending, then north-to-south (desktop only)
-- Light/dark theme toggle, persisted in localStorage
-- Spanish/English toggle, auto-detected from browser language
+- Each card shows local time, date, country, DST and UTC offset
+- Add cities from a **searchable autocomplete**, persisted in localStorage
+- **DST badge** next to the offset when the city is currently observing Daylight Saving Time
+- Mark a **home city** (highlighted card, cannot be removed while set)
+- Manual **drag & drop** reordering (desktop only)
+- ORD button: **Order cards** by local time ascending, then north-to-south (desktop only)
+- Light/dark **theme toggle**, persisted in localStorage
+- Spanish/English **language toggle**, auto-detected from browser language
 - Fully responsive grid layout
 
 ## Usage
@@ -29,7 +29,7 @@ You have 2 options:
 
 ## Privacy
 
-Fully private. no data sent out of your browser. Locations added are hosted in your local browser storage.
+Fully private. No data sent out of your browser. Locations added are hosted in your local browser storage.
 
 ## Created by
 
