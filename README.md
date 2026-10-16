@@ -1,4 +1,4 @@
-# Hora Mundial
+# World Time and Date
 
 Single-page world clock web app. Shows the current time in cities around the world with no build tools, no dependencies — pure HTML/CSS/JS in a single file.
 
@@ -16,7 +16,9 @@ Single-page world clock web app. Shows the current time in cities around the wor
 
 ## Usage
 
-Open `index.html` directly in a browser — no server required.
+You have 2 options:
+1. [Open it directly](https://mvergaram.github.io/time-and-date/)
+2. Download and Open `index.html` directly in a browser — no server required.
 
 ## Tech
 
@@ -24,6 +26,10 @@ Open `index.html` directly in a browser — no server required.
 - `Intl.DateTimeFormat` for timezone handling
 - `localStorage` for persistence (cities, theme, language, home city)
 - DST detection via Jan/Jun UTC offset comparison — works for both hemispheres
+
+## Privacy
+
+Fully private. no data sent out of your browser. Locations added are hosted in your local browser storage.
 
 ## Created by
 
